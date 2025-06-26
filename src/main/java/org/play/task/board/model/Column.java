@@ -57,7 +57,7 @@ public class Column  {
                 ", type=" + type +
                 ", name='" + name + '\'' +
                 ", order=" + order +
-                ", boardId=" + boardId +
+                ", id=" + boardId +
                 '}';
     }
 

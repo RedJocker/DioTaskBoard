@@ -19,8 +19,15 @@ public class SelectBoardIoForm extends IoForm<Optional<Board>, List<Board>> {
 
     @Override
     public Optional<Board> collect(List<Board> boards) {
-        // TODO select board with user input
-        io.printf("Boards: %s\n", boards);
-        return Optional.of(boards.getFirst());
+
+        for (Board board : boards) {
+            io.printf("\n\n\t- (%d) %s\n", board.id(), board.name());
+        }
+        io.printf("\t Choose a board: \n");
+
+        final String input = io.readLine().trim();
+        return boards.stream()
+                .filter(b ->b.name().equalsIgnoreCase(input) || b.id().toString().equals(input))
+                .findFirst();
     }
 }

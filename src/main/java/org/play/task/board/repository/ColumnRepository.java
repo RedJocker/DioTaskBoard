@@ -41,7 +41,7 @@ public class ColumnRepository {
                         "FROM `COLUMN` " +
                         "WHERE board_id = ? " +
                         "ORDER BY column_order"
-                ).param(board.boardId())
+                ).param(board.id())
                 .query(Column.class)
                 .list();
     }
