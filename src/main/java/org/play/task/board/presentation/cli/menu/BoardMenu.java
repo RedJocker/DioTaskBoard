@@ -59,12 +59,13 @@ public class BoardMenu extends Menu<Void> {
                 break;
             } else if (choice == CREATE_CARD.menuId) {
                 Optional<Card> maybeNewCard = cardCreateIoForm.collect(null);
-                if (maybeNewCard.isPresent()) {
-                    maybeNewCard = viewModel.onCreateCard(maybeNewCard.get());
-                } else {
+                if (!maybeNewCard.isPresent()) {
                     io.printf("Card creation cancelled\n");
                     continue;
+
                 }
+
+                maybeNewCard = viewModel.onCreateCard(maybeNewCard.get());
                 if (maybeNewCard.isPresent()) {
                     io.printf("Card created: %s\n", maybeNewCard.get().toString());
                 } else {

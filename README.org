@@ -13,7 +13,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
     - Criar novo board
     - Selecionar board
     - Excluir boards
-    - [x] Sair
+    - [X] Sair
   - O código deve salvar o board com suas informações no banco de dados MySQL;
 
 **** Regras dos boards
@@ -43,7 +43,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
     - =final= deve ser a penúltima coluna do board
     - =cancelamento= deve ser a última coluna do board
   - As colunas podem ter 0 ou N cards,
-  - [x] Cada card tem
+  - [X] Cada card tem
     - título,
     - descrição,
     - data de criação
@@ -60,7 +60,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
   - O menu deve permitir
     - mover o card para próxima coluna,
     - cancelar um card,
-    - [] criar um card,
+    - [X] criar um card,
     - bloquea-lo,
     - desbloquea-lo
     - fechar board;

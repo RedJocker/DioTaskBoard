@@ -2,6 +2,7 @@ package org.play.task.board.presentation.cli;
 
 
 import org.play.task.board.model.Card;
+import org.play.task.board.repository.CardRepository;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
@@ -12,21 +13,20 @@ import java.util.Optional;
 @Component
 @Scope("singleton")
 public class BoardViewModel {
-    private final JdbcClient jdbcClient;
 
-    BoardViewModel(JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
+    private final CardRepository cardRepository;
+    BoardViewModel(CardRepository cardRepository) {
+        this.cardRepository = cardRepository;
     }
 
     public void onDebug() {
-        final List<Card> cards = jdbcClient.sql("SELECT * FROM CARD")
-                .query(Card.class)
-                .list();
+        final List<Card> cards = cardRepository.getAll();
         System.out.println(cards);
     }
 
     public Optional<Card> onCreateCard(Card newCard) {
         System.out.println("ViewModel.onCreateCard: " + newCard.toString());
-        return Optional.of(newCard);
+
+        return cardRepository.save(newCard);
     }
 }
