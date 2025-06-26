@@ -49,7 +49,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
     - data de criação
     - se está bloqueado;
   - Um card deve navegar nas colunas
-    - seguindo a ordem delas no board, sem pular nenhuma etapa,
+    - seguindo a ordem das coluna no board, sem pular nenhuma etapa,
     - exceto pela coluna de cards cancelados que pode receber cards diretamente de qualquer coluna
     - a coluna de cards cancelados não aceita cartões da coluna final;
     - Se um card estiver marcado como bloqueado ele não pode ser movido até ser desbloqueado
