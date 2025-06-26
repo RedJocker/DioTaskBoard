@@ -1,7 +1,6 @@
 package org.play.task.board.presentation.cli.menu;
 
 import org.play.task.board.presentation.cli.BoardViewModel;
-import org.play.task.board.presentation.cli.form.CardCreateIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.stereotype.Component;
 

@@ -4,7 +4,6 @@ package org.play.task.board.presentation.cli;
 import org.play.task.board.model.Card;
 import org.play.task.board.repository.CardRepository;
 import org.springframework.context.annotation.Scope;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
