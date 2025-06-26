@@ -43,7 +43,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
     - =final= deve ser a penúltima coluna do board
     - =cancelamento= deve ser a última coluna do board
   - As colunas podem ter 0 ou N cards,
-  - Cada card tem
+  - [x] Cada card tem
     - título,
     - descrição,
     - data de criação
