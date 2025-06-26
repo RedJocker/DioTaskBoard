@@ -48,7 +48,8 @@ public class CardCreateIoForm extends IoForm<Optional<Card>, Void> {
                     cardName ,
                     description,
                     OffsetDateTime.now(),
-                    false
+                    false,
+                    null
             ));
         }
         return Optional.empty();

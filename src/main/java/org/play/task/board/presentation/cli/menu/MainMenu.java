@@ -1,5 +1,6 @@
 package org.play.task.board.presentation.cli.menu;
 
+import org.play.task.board.model.Board;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.stereotype.Component;
@@ -64,7 +65,7 @@ public class MainMenu extends Menu<Void> {
             if(choice == EXIT.menuId) {
                 break;
             } else if (choice == BOARD.menuId) {
-                boardMenu.loop(viewModel, null);
+                boardMenu.loop(viewModel, new Board(1L, "TODO"));
             } else if (choice == DEBUG.menuId) {
                 viewModel.onDebug();
             }

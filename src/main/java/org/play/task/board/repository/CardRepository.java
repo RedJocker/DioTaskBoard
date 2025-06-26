@@ -25,30 +25,32 @@ public class CardRepository {
                 .list();
     }
 
-    public Optional<Card> save(Card newCard) {
+    public Optional<Card> save(Card newCard, Long columnId) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         int affectedRows = jdbcClient.sql("""
-            INSERT INTO CARD (NAME, DESCRIPTION, CREATED_AT, IS_BLOCKED)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO CARD (NAME, DESCRIPTION, CREATED_AT, IS_BLOCKED, COLUMN_ID)
+            VALUES (?, ?, ?, ?, ?)
             """)
                 .param(newCard.name())
                 .param(newCard.description())
                 .param(newCard.createdAt())
                 .param(newCard.isBlocked())
-                .update(keyHolder, "id");
+                .param(columnId)
+                .update(keyHolder, "card_id");
 
         if (affectedRows == 0) {
             return Optional.empty();
         }
 
-        Integer id = keyHolder.getKeyAs(Integer.class);
+        Long id = keyHolder.getKeyAs(Long.class);
         return Optional.of(new Card(
-                id.longValue(),
+                id,
                 newCard.name(),
                 newCard.description(),
                 newCard.createdAt(),
-                newCard.isBlocked()
+                newCard.isBlocked(),
+                columnId
         ));
     }
 }

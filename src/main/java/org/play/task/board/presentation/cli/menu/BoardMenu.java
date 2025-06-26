@@ -1,12 +1,15 @@
 package org.play.task.board.presentation.cli.menu;
 
+import org.play.task.board.model.Board;
 import org.play.task.board.model.Card;
+import org.play.task.board.model.Column;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.form.CardCreateIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choices.CREATE_CARD;
@@ -15,7 +18,7 @@ import static org.play.task.board.presentation.cli.menu.BoardMenu.Choices.EXIT;
 
 @Component
 @Scope("singleton")
-public class BoardMenu extends Menu<Void> {
+public class BoardMenu extends Menu<Board> {
 
     enum Choices {
         EXIT(0),
@@ -49,7 +52,9 @@ public class BoardMenu extends Menu<Void> {
     }
 
     @Override
-    public void loop(BoardViewModel viewModel, Void args) {
+    public void loop(BoardViewModel viewModel, Board board) {
+        List<Column> boardColumns = viewModel.getColumns(board);
+        Column initialColumn = boardColumns.getFirst();
 
         int choice = -1;
         while (choice != 0) {
@@ -65,7 +70,7 @@ public class BoardMenu extends Menu<Void> {
 
                 }
 
-                maybeNewCard = viewModel.onCreateCard(maybeNewCard.get());
+                maybeNewCard = viewModel.onCreateCard(maybeNewCard.get(), initialColumn);
                 if (maybeNewCard.isPresent()) {
                     io.printf("Card created: %s\n", maybeNewCard.get().toString());
                 } else {
