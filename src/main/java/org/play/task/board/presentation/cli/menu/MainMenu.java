@@ -1,31 +1,41 @@
 package org.play.task.board.presentation.cli.menu;
 
+import org.play.task.board.model.Card;
 import org.play.task.board.presentation.cli.BoardViewModel;
+import org.play.task.board.presentation.cli.form.CardCreateIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.stereotype.Component;
 
-import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.DEBUG;
+import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.EXIT;
+import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.DEBUG;
+
+
 
 @Component
 public class MainMenu extends Menu<Void> {
 
     enum Choices {
         EXIT(0),
-        DEBUG(1);
+        BOARD(1),
+        DEBUG(2);
 
         private final int menuId;
+
         Choices(int menuId) {
             this.menuId = menuId;
         }
     }
     private static final String welcome = "\n\tT  A  S  K -> B  O  A  R  D\n\n";
     private static final String startMenu =
-            "Main Menu:\n\t- Exit (0)\n\t- Debug (1)\n";
+            "Main Menu:\n\t- (0) Exit\n\t- (1) Board\n\t- (2) Debug\n";
     private static final String bye = "\n\n\tBye\n\n";
 
-    MainMenu(IoAdapter ioAdapter) {
+    private final CardCreateIoForm cardCreateIoForm;
+
+    MainMenu(IoAdapter ioAdapter, CardCreateIoForm cardCreateIoForm) {
         super(ioAdapter);
+        this.cardCreateIoForm = cardCreateIoForm;
     }
 
     public void displayWelcome() {
@@ -38,7 +48,7 @@ public class MainMenu extends Menu<Void> {
 
     @Override
     public Integer getMenuSize() {
-        return 2;
+        return DEBUG.menuId + 1;
     }
 
     @Override
@@ -55,9 +65,13 @@ public class MainMenu extends Menu<Void> {
             choice = this.promptMenuChoice();
             if(choice == EXIT.menuId) {
                 break;
+            } else if (choice == BOARD.menuId) {
+                Card newCard = cardCreateIoForm.collect(null);
+                io.printf("%s\n", newCard.toString());
             } else if (choice == DEBUG.menuId) {
                 viewModel.onDebug();
             }
+
         }
         this.displayBye();
         System.exit(0);
