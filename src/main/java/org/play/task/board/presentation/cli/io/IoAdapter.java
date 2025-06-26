@@ -3,7 +3,7 @@ package org.play.task.board.presentation.cli.io;
 import java.util.Optional;
 
 public interface IoAdapter {
-    public IoAdapter printf(String format, Object ... args);
+    public IoAdapter printf(String format, Object... args);
     public String readLine(String fmt, Object ... args);
     public String readLine();
     public String readPassword(String fmt, Object ... args);

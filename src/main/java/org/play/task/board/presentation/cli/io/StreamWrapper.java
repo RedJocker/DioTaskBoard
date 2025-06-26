@@ -29,16 +29,16 @@ public class StreamWrapper implements IoAdapter {
     }
     @Override
     public String readPassword(String fmt, Object ... args) {
-        out.printf("Warning: this is not a fully functional terminal\n");
-        out.printf("Password will not be hidden while typing it\n");
+        out.print("Warning: this is not a fully functional terminal\n");
+        out.print("Password will not be hidden while typing it\n");
         out.printf(fmt, args);
         return this.readPassword();
     }
 
     @Override
     public String readPassword() {
-        out.printf("Warning: this is not a fully functional terminal\n");
-        out.printf("Password will not be hidden while typing it\n");
+        out.print("Warning: this is not a fully functional terminal\n");
+        out.print("Password will not be hidden while typing it\n");
         return this.readLine();
     }
 }

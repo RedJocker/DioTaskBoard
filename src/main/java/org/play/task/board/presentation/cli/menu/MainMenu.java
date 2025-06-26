@@ -1,14 +1,13 @@
 package org.play.task.board.presentation.cli.menu;
 
-import org.play.task.board.model.Card;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.form.CardCreateIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.stereotype.Component;
 
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.BOARD;
-import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.EXIT;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.DEBUG;
+import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.EXIT;
 
 
 
@@ -31,19 +30,19 @@ public class MainMenu extends Menu<Void> {
             "Main Menu:\n\t- (0) Exit\n\t- (1) Board\n\t- (2) Debug\n";
     private static final String bye = "\n\n\tBye\n\n";
 
-    private final CardCreateIoForm cardCreateIoForm;
+    private final BoardMenu boardMenu;
 
-    MainMenu(IoAdapter ioAdapter, CardCreateIoForm cardCreateIoForm) {
+    MainMenu(IoAdapter ioAdapter, BoardMenu boardMenu) {
         super(ioAdapter);
-        this.cardCreateIoForm = cardCreateIoForm;
+        this.boardMenu = boardMenu;
     }
 
     public void displayWelcome() {
-        io.printf(this.welcome);
+        io.printf(welcome);
     }
 
     public void displayBye() {
-        io.printf(this.bye);
+        io.printf(bye);
     }
 
     @Override
@@ -66,8 +65,7 @@ public class MainMenu extends Menu<Void> {
             if(choice == EXIT.menuId) {
                 break;
             } else if (choice == BOARD.menuId) {
-                Card newCard = cardCreateIoForm.collect(null);
-                io.printf("%s\n", newCard.toString());
+                boardMenu.loop(viewModel, null);
             } else if (choice == DEBUG.menuId) {
                 viewModel.onDebug();
             }

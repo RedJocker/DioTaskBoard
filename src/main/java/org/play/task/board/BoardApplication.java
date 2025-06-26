@@ -3,7 +3,6 @@ package org.play.task.board;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.menu.MainMenu;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
