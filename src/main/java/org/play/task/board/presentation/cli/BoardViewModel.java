@@ -47,4 +47,8 @@ public class BoardViewModel {
         // TODO get from repository
         return boardRepository.getAll();
     }
+
+    public boolean excludeBoard(Board board) {
+        return boardRepository.deleteBoard(board);
+    }
 }

@@ -19,11 +19,11 @@ public class SelectBoardIoForm extends IoForm<Optional<Board>, List<Board>> {
 
     @Override
     public Optional<Board> collect(List<Board> boards) {
-
+        io.printf("\nChoose a board:\n");
         for (Board board : boards) {
-            io.printf("\n\n\t- (%d) %s\n", board.id(), board.name());
+            io.printf("\t- (%d) %s\n", board.id(), board.name());
         }
-        io.printf("\t Choose a board: \n");
+
 
         final String input = io.readLine().trim();
         return boards.stream()

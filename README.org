@@ -12,7 +12,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
   - O código deve iniciar disponibilizando um =menu inicial= com as seguintes opções:
     - Criar novo board
     - [X] Selecionar board
-    - [ ] Excluir boards
+    - [X] Excluir boards
     - [X] Sair
   - O código deve salvar o board com suas informações no banco de dados MySQL;
 

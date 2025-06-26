@@ -24,4 +24,11 @@ public class BoardRepository {
                 ).query(Board.class)
                 .list();
     }
+
+    public boolean deleteBoard(Board board) {
+        return jdbcClient.sql("DELETE FROM BOARD WHERE BOARD_ID = ?")
+                .param(board.id())
+                .update() == 1;
+
+    }
 }

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Column (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     column_order INTEGER NOT NULL,
     board_id LONG NOT NULL,
-    FOREIGN KEY (board_id) references Board(board_id)
+    FOREIGN KEY (board_id) references Board(board_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Card (
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Card (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_blocked BOOL NOT NULL DEFAULT FALSE,
     column_id Long NOT NULL,
-    FOREIGN KEY (column_id) references Column(column_id)
+    FOREIGN KEY (column_id) references Column(column_id) ON DELETE CASCADE
 );
 
 INSERT INTO Board (name) VALUES ('TaskBoardApp');
