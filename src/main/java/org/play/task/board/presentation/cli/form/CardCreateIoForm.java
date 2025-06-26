@@ -6,34 +6,51 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Component
 @Scope("singleton")
-public class CardCreateIoForm extends IoForm<Card, Void> {
+public class CardCreateIoForm extends IoForm<Optional<Card>, Void> {
 
     protected CardCreateIoForm(IoAdapter ioAdapter) {
         super(ioAdapter);
     }
 
     @Override
-    public Card collect(Void args) {
+    public Optional<Card> collect(Void args) {
 
         io.printf("New Card:\n");
-//        while (true){
-//            io.printf("How much have you deposited:\n");
-//            final Optional<Double> maybeDepositAmount =
-//                    io.readDoublerUnsigned();
-//
-//            if (!maybeDepositAmount.isPresent()) {
-//                io.printf("Invalid deposit\n");
-//                if (tryAgain()) {
-//                    continue ;
-//                }
-//                else
-//                    break ;
-//            }
-//
-//        }
-        return new Card(null, "Todo task", "create card from input", OffsetDateTime.now(), false);
+        while (true){
+            io.printf("\tCard name:\n\t");
+            final String cardName = io.readLine().trim();
+
+            if (!Card.validName(cardName)) {
+                io.printf("\tInvalid card name: '%s'\n", cardName);
+                if (tryAgain()) {
+                    continue ;
+                }
+                else
+                    break ;
+            }
+
+            io.printf("\tCard description:\n\t");
+            final String description = io.readLine().trim();
+
+            if (!Card.validDescription(description)) {
+                io.printf("\tInvalid card description: '%s'\n", description);
+                if (tryAgain()) {
+                    continue ;
+                }
+                else
+                    break ;
+            }
+            return Optional.of(new Card(null,
+                    cardName ,
+                    description,
+                    OffsetDateTime.now(),
+                    false
+            ));
+        }
+        return Optional.empty();
     }
 }

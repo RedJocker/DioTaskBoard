@@ -25,7 +25,7 @@ public class StreamWrapper implements IoAdapter {
     }
     @Override
     public String readLine() {
-        return in.hasNext() ? in.nextLine() : null;
+        return in.hasNextLine() ? in.nextLine() : null;
     }
     @Override
     public String readPassword(String fmt, Object ... args) {

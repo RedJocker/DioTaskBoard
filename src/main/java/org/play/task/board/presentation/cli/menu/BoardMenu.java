@@ -7,6 +7,8 @@ import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choices.CREATE_CARD;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choices.EXIT;
 
@@ -53,11 +55,21 @@ public class BoardMenu extends Menu<Void> {
         while (choice != 0) {
 
             choice = this.promptMenuChoice();
-            if(choice == EXIT.menuId) {
+            if (choice == EXIT.menuId) {
                 break;
             } else if (choice == CREATE_CARD.menuId) {
-                Card newCard = cardCreateIoForm.collect(null);
-                io.printf("%s\n", newCard.toString());
+                Optional<Card> maybeNewCard = cardCreateIoForm.collect(null);
+                if (maybeNewCard.isPresent()) {
+                    maybeNewCard = viewModel.onCreateCard(maybeNewCard.get());
+                } else {
+                    io.printf("Card creation cancelled\n");
+                    continue;
+                }
+                if (maybeNewCard.isPresent()) {
+                    io.printf("Card created: %s\n", maybeNewCard.get().toString());
+                } else {
+                    io.printf("Card creation failed\n");
+                }
             }
         }
     }
