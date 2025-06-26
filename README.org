@@ -10,7 +10,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
 
 **** Requisitos
   - O código deve iniciar disponibilizando um =menu inicial= com as seguintes opções:
-    - Criar novo board
+    - [ ] Criar novo board
     - [X] Selecionar board
     - [X] Excluir boards
     - [X] Sair
