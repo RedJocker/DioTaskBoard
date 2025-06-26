@@ -60,7 +60,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
   - O menu deve permitir
     - mover o card para próxima coluna,
     - cancelar um card,
-    - criar um card,
+    - [] criar um card,
     - bloquea-lo,
     - desbloquea-lo
     - fechar board;
