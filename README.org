@@ -24,7 +24,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
       - coluna para cards com tarefas concluídas
       - coluna para cards cancelados
     - nomenclatura das colunas é de escolha livre;
-  - As colunas deve ter
+  - [] As colunas deve ter
     - respectivo nome,
     - ordem que aparece no board
     - seu tipo
