@@ -16,26 +16,29 @@ public class Column  {
     final private String name;
     final private int order;
 
-    private Column (Long columnId, Type type, String name, int order) {
+    final private long boardId;
+
+    private Column (Long columnId, Type type, String name, int order, long boardId) {
         this.columnId = columnId;
         this.type = type;
         this.name = name;
         this.order = order;
+        this.boardId = boardId;
     }
 
-    public static Column initial() {
-        return new Column(null, Type.INITIAL, "initial", 0);
+    public static Column initial(long boardId) {
+        return new Column(null, Type.INITIAL, "initial", 0, boardId);
     }
 
-    public static Column finall() {
-        return new Column(null, Type.FINAL, "final", Integer.MAX_VALUE - 1);
+    public static Column finall(long boardId) {
+        return new Column(null, Type.FINAL, "final", Integer.MAX_VALUE - 1, boardId);
     }
 
-    public static Column canceled() {
-        return new Column(null, Type.CANCELED, "canceled", Integer.MAX_VALUE);
+    public static Column canceled(long boardId) {
+        return new Column(null, Type.CANCELED, "canceled", Integer.MAX_VALUE, boardId);
     }
 
-    public static Either<Column, String> pending(String name, int order) {
+    public static Either<Column, String> pending(String name, int order, long boardId) {
         final String nameNorm = name.trim().toLowerCase();
         if (nameNorm.equals("initial") || nameNorm.equals("final") || nameNorm.equals("canceled"))
             return Either.bad("pending column cannot have reserved column name " + nameNorm);
@@ -44,16 +47,17 @@ public class Column  {
         if (order == 0 || order >= Integer.MAX_VALUE - 1) {
             return Either.bad("invalid column order" + order + " is reserved value");
         }
-        return Either.good(new Column(null, Type.PENDING, nameNorm, order));
+        return Either.good(new Column(null, Type.PENDING, nameNorm, order, boardId));
     }
 
     @Override
     public String toString() {
         return "Column{" +
-                "boardId=" + columnId +
+                "columnId=" + columnId +
                 ", type=" + type +
                 ", name='" + name + '\'' +
                 ", order=" + order +
+                ", boardId=" + boardId +
                 '}';
     }
 
@@ -71,9 +75,5 @@ public class Column  {
 
     public int order() {
         return order;
-    }
-
-    public void setColumnId(long columnId) {
-        this.columnId = columnId;
     }
 }

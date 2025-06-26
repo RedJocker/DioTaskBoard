@@ -5,6 +5,7 @@ import org.play.task.board.model.Board;
 import org.play.task.board.model.Card;
 import org.play.task.board.model.Column;
 import org.play.task.board.repository.CardRepository;
+import org.play.task.board.repository.ColumnRepository;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +17,10 @@ import java.util.Optional;
 public class BoardViewModel {
 
     private final CardRepository cardRepository;
-    BoardViewModel(CardRepository cardRepository) {
+    private final ColumnRepository columnRepository;
+    BoardViewModel(CardRepository cardRepository, ColumnRepository columnRepository) {
         this.cardRepository = cardRepository;
+        this.columnRepository = columnRepository;
     }
 
     public void onDebug() {
@@ -32,9 +35,7 @@ public class BoardViewModel {
     }
 
     public List<Column> getColumns(Board board) {
-        // TODO get columns from database
-        Column initial = Column.initial();
-        initial.setColumnId(2);
-        return List.of(initial);
+
+        return columnRepository.getAllFromBoard(board);
     }
 }

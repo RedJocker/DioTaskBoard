@@ -6,8 +6,10 @@ CREATE TABLE IF NOT EXISTS Board (
 
 CREATE TABLE IF NOT EXISTS Column (
     column_id LONG AUTO_INCREMENT PRIMARY KEY,
+    column_type VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    column_order INTEGER NOT NULL,
     board_id LONG NOT NULL,
     FOREIGN KEY (board_id) references Board(board_id)
 );
@@ -22,7 +24,7 @@ CREATE TABLE IF NOT EXISTS Card (
     FOREIGN KEY (column_id) references Column(column_id)
 );
 
--- INSERT INTO Board (name) VALUES ('TaskBoardApp');
--- INSERT INTO Column (NAME, BOARD_ID) VALUES ('initial', 1);
-INSERT INTO Card (NAME, DESCRIPTION, COLUMN_ID)
-    VALUES ( 'TaskBoard', 'Create a taskboard', 2);
+INSERT INTO Board (name) VALUES ('TaskBoardApp');
+INSERT INTO Column (name, column_type, board_id, column_order) VALUES ('initial', 'INITIAL', 1, 0);
+INSERT INTO Card (name, description, column_id)
+    VALUES ( 'TaskBoard', 'Create a taskboard', 1);

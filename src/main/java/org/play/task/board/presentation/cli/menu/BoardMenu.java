@@ -54,6 +54,7 @@ public class BoardMenu extends Menu<Board> {
     @Override
     public void loop(BoardViewModel viewModel, Board board) {
         List<Column> boardColumns = viewModel.getColumns(board);
+        io.printf("%s\n", boardColumns);
         Column initialColumn = boardColumns.getFirst();
 
         int choice = -1;
