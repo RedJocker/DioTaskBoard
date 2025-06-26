@@ -38,4 +38,9 @@ public class BoardViewModel {
 
         return columnRepository.getAllFromBoard(board);
     }
+
+    public List<Board> getBoards() {
+        // TODO get from repository
+        return List.of(new Board(1L, "TODO"));
+    }
 }

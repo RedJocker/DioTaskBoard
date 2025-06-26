@@ -2,8 +2,12 @@ package org.play.task.board.presentation.cli.menu;
 
 import org.play.task.board.model.Board;
 import org.play.task.board.presentation.cli.BoardViewModel;
+import org.play.task.board.presentation.cli.form.SelectBoardIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choices.DEBUG;
@@ -32,9 +36,12 @@ public class MainMenu extends Menu<Void> {
 
     private final BoardMenu boardMenu;
 
-    MainMenu(IoAdapter ioAdapter, BoardMenu boardMenu) {
+    private final SelectBoardIoForm selectBoardIoform;
+
+    MainMenu(IoAdapter ioAdapter, BoardMenu boardMenu, SelectBoardIoForm selectBoardIoform) {
         super(ioAdapter);
         this.boardMenu = boardMenu;
+        this.selectBoardIoform = selectBoardIoform;
     }
 
     public void displayWelcome() {
@@ -65,7 +72,15 @@ public class MainMenu extends Menu<Void> {
             if(choice == EXIT.menuId) {
                 break;
             } else if (choice == BOARD.menuId) {
-                boardMenu.loop(viewModel, new Board(1L, "TODO"));
+                final List<Board> boards =  viewModel.getBoards();
+                final Optional<Board> maybeBoard = selectBoardIoform.collect(boards);
+
+                if (maybeBoard.isPresent()) {
+                    boardMenu.loop(viewModel, maybeBoard.get());
+                } else {
+                    io.printf("Board not found");
+                }
+
             } else if (choice == DEBUG.menuId) {
                 viewModel.onDebug();
             }
