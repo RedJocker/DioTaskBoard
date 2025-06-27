@@ -57,7 +57,7 @@ public class Column  {
         CANCELED;
 
     }
-    private Long columnId;
+    final private Long columnId;
 
     final private Type type;
     final private String name;

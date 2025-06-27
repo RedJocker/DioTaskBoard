@@ -57,14 +57,13 @@ public class BoardMenu extends Menu<Board> {
     }
 
     private static final String startMenu =
-            "Board Menu:\n" + choices() + "\n";
+            "Board Menu:\n" + choices();
 
     private final CardCreateIoForm cardCreateIoForm;
 
     private final ColumnCreateIoForm columnCreateIoForm;
 
-    List<Column> boardColumns = null;
-    List<Card> cardsAll = null;
+
 
     BoardMenu(IoAdapter ioAdapter,
               CardCreateIoForm cardCreateIoForm,
@@ -87,8 +86,6 @@ public class BoardMenu extends Menu<Board> {
 
     @Override
     public void loop(BoardViewModel viewModel, Board board) {
-        boardColumns = viewModel.getColumns(board);
-        cardsAll = viewModel.getCardsForColumns(boardColumns);
 
         int choice = -1;
         while (choice != 0) {
@@ -117,7 +114,7 @@ public class BoardMenu extends Menu<Board> {
             io.printf(COLUMN_DETAILS_TITLE, column.name());
 
 
-            List<Card> cardsInColumn = cardsAll.stream()
+            List<Card> cardsInColumn = viewModel.cardsAll(board).stream()
                     .filter(card -> card.columnId().equals(column.columnId()))
                     .toList();
             if (cardsInColumn.isEmpty()) {
@@ -132,11 +129,11 @@ public class BoardMenu extends Menu<Board> {
             if (input.isEmpty())
                 return;
             else if (input.equals("n") || input.equals("next")) {
-                final Column next = Column.next(boardColumns, column);
+                final Column next = Column.next(viewModel.boardColumns(board), column);
                 showColumnDetails(viewModel, next, board);
                 return;
             } else if (input.equals("p") || input.equals("prev") || input.equals("previous")) {
-                final Column previous = Column.previous(boardColumns, column);
+                final Column previous = Column.previous(viewModel.boardColumns(board), column);
                 showColumnDetails(viewModel, previous, board);
                 return;
             } else if (input.equals("l") || input.equals("list")) {
@@ -148,10 +145,10 @@ public class BoardMenu extends Menu<Board> {
             } else if (input.matches("^move \\d+$")) {
                 String[] parts = input.split(" ");
 
-                Optional<Card> maybeCard = Card.findCardByNameOrId(cardsAll, parts[1]);
+                Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
                 if (maybeCard.isPresent() && Objects.equals(maybeCard.get().columnId(), column.columnId())) {
                     Card card = maybeCard.get();
-                    Column nextColumn = Column.next(boardColumns, column);
+                    Column nextColumn = Column.next(viewModel.boardColumns(board), column);
                     moveCard(viewModel, card, column, nextColumn);
                     continue;
                 }
@@ -160,11 +157,11 @@ public class BoardMenu extends Menu<Board> {
 
 
             Optional<Card> maybeCard =
-                    Card.findCardByNameOrId(cardsAll, input.trim());
+                    Card.findCardByNameOrId(viewModel.cardsAll(board), input.trim());
 
             if (maybeCard.isPresent()) {
                 Card card = maybeCard.get();
-                showCardDetails(card);
+                showCardDetails(viewModel, card, board);
             } else {
                 io.printf("Card not found: %s\n", input.trim());
                 return;
@@ -177,9 +174,10 @@ public class BoardMenu extends Menu<Board> {
                 || column.type() == Column.Type.CANCELED) {
             return;
         }
-        if (viewModel.moveCard(card, nextColumn)) {
+        if (card.isBlocked()) {
+            io.printf("Card %s is blocked and cannot be moved\n", card.name());
+        } else if (viewModel.moveCard(card, nextColumn)) {
             io.printf("Card %s moved to column %s\n", card.name(), nextColumn.name());
-            cardsAll = viewModel.getCardsForColumns(boardColumns);
         } else {
             io.printf("Failed to move card %s to column %s\n", card.name(), nextColumn.name());
         }
@@ -190,9 +188,9 @@ public class BoardMenu extends Menu<Board> {
 
         while (true) {
             io.printf(BOARD_DETAILS_TITLE, board.name());
-            for (Column column : boardColumns) {
+            for (Column column : viewModel.boardColumns(board)) {
                 io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
-                List<Card> cardsInColumn = cardsAll.stream()
+                List<Card> cardsInColumn = viewModel.cardsAll(board).stream()
                         .filter(card -> card.columnId().equals(column.columnId()))
                         .toList();
                 if (cardsInColumn.isEmpty()) {
@@ -208,10 +206,10 @@ public class BoardMenu extends Menu<Board> {
                 return ;
             else if(input.charAt(0) == '\t') {
                 Optional<Card> maybeCard =
-                        Card.findCardByNameOrId(cardsAll, input.trim());
+                        Card.findCardByNameOrId(viewModel.cardsAll(board), input.trim());
                 if (maybeCard.isPresent()) {
                     Card card = maybeCard.get();
-                    showCardDetails(card);
+                    showCardDetails(viewModel, card, board);
                 } else {
                     io.printf("Card not found: %s\n", input.trim());
                     return;
@@ -220,12 +218,12 @@ public class BoardMenu extends Menu<Board> {
                 if (input.matches("^move \\d+$")) {
                     String[] parts = input.split(" ");
 
-                    Optional<Card> maybeCard = Card.findCardByNameOrId(cardsAll, parts[1]);
+                    Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
                     if (maybeCard.isPresent()) {
                         Card card = maybeCard.get();
-                        Optional<Column> maybeColumn = Column.findColumnById(boardColumns, card.columnId());
+                        Optional<Column> maybeColumn = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
                         if (maybeColumn.isPresent()) {
-                            Column nextColumn = Column.next(boardColumns, maybeColumn.get());
+                            Column nextColumn = Column.next(viewModel.boardColumns(board), maybeColumn.get());
                             moveCard(viewModel, card, maybeColumn.get(), nextColumn);
                             continue;
                         }
@@ -235,7 +233,7 @@ public class BoardMenu extends Menu<Board> {
                     return;
                 }
                 Optional<Column> columnByNameOrId =
-                        Column.findColumnByNameOrId(boardColumns, input.trim());
+                        Column.findColumnByNameOrId(viewModel.boardColumns(board), input.trim());
                 if (columnByNameOrId.isPresent()) {
                     showColumnDetails(viewModel, columnByNameOrId.get(), board);
                 } else {
@@ -247,10 +245,10 @@ public class BoardMenu extends Menu<Board> {
 
     }
 
-    private void showCardDetails(Card card) {
+    private void showCardDetails(BoardViewModel viewModel, Card card, Board board) {
 
         io.printf("Card Details:\n");
-        Optional<Column> maybeColumn = Column.findColumnById(boardColumns, card.columnId());
+        Optional<Column> maybeColumn = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
         if(maybeColumn.isPresent()) {
             io.printf("\tColumn Name: %s\n", maybeColumn.get().name());
         }
@@ -260,12 +258,39 @@ public class BoardMenu extends Menu<Board> {
         io.printf("\tCreated At: %s\n", card.createdAt());
         io.printf("\tBlocked: %s\n", card.isBlocked() ? "Yes" : "No");
 
-        io.readLine();
+        String input = io.readLine();
+        if (input.isBlank())
+            return;
+        if (input.equals("b") || input.equals("block")) {
+            if(cardBlock(viewModel, card, board)) {
+                Optional<Card> maybeBlockedCard = Card
+                        .findCardByNameOrId(viewModel.cardsAll(board), card.name());
+                if (maybeBlockedCard.isPresent()) {
+                    showCardDetails(viewModel, maybeBlockedCard.get(), board);
+                    return;
+                }
+            }
+        }
+        showCardDetails(viewModel, card, board);
+    }
+
+    private boolean cardBlock(BoardViewModel viewModel, Card card, Board board) {
+        if (card.isBlocked()) {
+            io.printf("Card %s is already blocked\n", card.name());
+            return false;
+        }
+        boolean wasBlocked = viewModel.blockCard(board, card);
+        if (wasBlocked) {
+            io.printf("Card %s blocked successfully\n", card.name());
+        } else {
+            io.printf("Failed to block card %s\n", card.name());
+        }
+        return wasBlocked;
     }
 
     private void showColumnsShort(BoardViewModel viewModel, Board board) {
         io.printf(BOARD_DETAILS_TITLE, board.name());
-        boardColumns.forEach(column -> {
+        viewModel.boardColumns(board).forEach(column -> {
             io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
         });
         io.printf("\n");
@@ -282,7 +307,7 @@ public class BoardMenu extends Menu<Board> {
         }
 
         Optional<Column> columnByNameOrId =
-                Column.findColumnByNameOrId(boardColumns, input.trim());
+                Column.findColumnByNameOrId(viewModel.boardColumns(board), input.trim());
         if (columnByNameOrId.isPresent()) {
             showColumnDetails(viewModel, columnByNameOrId.get(), board);
         } else {
@@ -299,11 +324,10 @@ public class BoardMenu extends Menu<Board> {
         }
 
         // always creates card on initial column
-        Column initialColumn = boardColumns.getFirst();
+        Column initialColumn = viewModel.boardColumns(board).getFirst();
         maybeNewCard = viewModel.onCreateCard(maybeNewCard.get(), initialColumn);
         if (maybeNewCard.isPresent()) {
             io.printf("Card created: %s\n", maybeNewCard.get().toString());
-            cardsAll = viewModel.getCardsForColumns(boardColumns);
         } else {
             io.printf("Card creation failed\n");
         }
@@ -311,7 +335,7 @@ public class BoardMenu extends Menu<Board> {
 
     private void createColumn(BoardViewModel viewModel, Board board) {
 
-        Optional<Column> maybeNewColumn = columnCreateIoForm.collect(new Pair<>(board, boardColumns));
+        Optional<Column> maybeNewColumn = columnCreateIoForm.collect(new Pair<>(board, viewModel.boardColumns(board)));
         if (maybeNewColumn.isEmpty()) {
             io.printf("Column creation cancelled\n");
             return;
@@ -319,7 +343,7 @@ public class BoardMenu extends Menu<Board> {
         maybeNewColumn = viewModel.onCreateColumn(maybeNewColumn.get());
         if (maybeNewColumn.isPresent()) {
             io.printf("Column created: %s\n", maybeNewColumn.get().name());
-            boardColumns = viewModel.getColumns(board);
+
         } else {
             io.printf("Column creation failed\n");
         }

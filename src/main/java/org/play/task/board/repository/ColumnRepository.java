@@ -24,16 +24,21 @@ public class ColumnRepository {
     }
 
     public List<Column> getAll() {
-        return jdbcClient.sql("SELECT " +
+        try {
+            return jdbcClient.sql("SELECT " +
                             "column_id, " +
                             "column_type as type, " +
                             "name, " +
                             "created_at, " +
-                            "column_order as 'order', " +
+                            "column_order as `order`, " +
                             "board_id " +
-                        "FROM COLUMN ORDER BY column_order"
-                ).query(Column.class)
-                .list();
+                            "FROM COLUMN ORDER BY column_order"
+                    ).query(Column.class)
+                    .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public List<Column> getAllFromBoard(Board board) {

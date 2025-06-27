@@ -1,5 +1,6 @@
 package org.play.task.board.repository;
 
+import org.play.task.board.model.Board;
 import org.play.task.board.model.Card;
 import org.play.task.board.model.Column;
 import org.springframework.context.annotation.Scope;
@@ -72,7 +73,7 @@ public class CardRepository {
     }
 
     public boolean moveCard(Card card, Column column) {
-        if (card == null || column == null) {
+        if (card == null || column == null || card.isBlocked()) {
             return false;
         }
 
@@ -80,5 +81,20 @@ public class CardRepository {
                 .param(column.columnId())
                 .param(card.cardId())
                 .update() == 1 ;
+    }
+
+    public boolean blockCard(Board board, Card card) {
+        if (board == null || card == null) {
+            return false;
+        }
+        try {
+            return jdbcClient.sql("UPDATE CARD SET IS_BLOCKED = ? WHERE CARD_ID = ?;")
+                    .param(true)
+                    .param(card.cardId())
+                    .update() == 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -21,6 +21,9 @@ public class BoardViewModel {
     private final ColumnRepository columnRepository;
     private final BoardRepository boardRepository;
 
+    private List<Column> boardColumnsCache = null;
+    private List<Card> cardsAllCache = null;
+
     BoardViewModel(CardRepository cardRepository, ColumnRepository columnRepository, BoardRepository boardRepository) {
         this.cardRepository = cardRepository;
         this.columnRepository = columnRepository;
@@ -33,18 +36,14 @@ public class BoardViewModel {
     }
 
     public Optional<Card> onCreateCard(Card newCard, Column initialColumn) {
-        System.out.println("ViewModel.onCreateCard: " + newCard.toString());
-
-        return cardRepository.save(newCard, initialColumn.columnId());
-    }
-
-    public List<Column> getColumns(Board board) {
-
-        return columnRepository.getAllFromBoard(board);
+        Optional<Card> maybeNewCard = cardRepository.save(newCard, initialColumn.columnId());
+        if (maybeNewCard.isPresent()) {
+            cardsAllCache = null;
+        }
+        return maybeNewCard;
     }
 
     public List<Board> getBoards() {
-        // TODO get from repository
         return boardRepository.getAll();
     }
 
@@ -56,15 +55,47 @@ public class BoardViewModel {
         return boardRepository.save(board);
     }
 
-    public List<Card> getCardsForColumns(List<Column> boardColumns) {
-        return cardRepository.getCardsFromColumns(boardColumns);
-    }
 
     public Optional<Column> onCreateColumn(Column column) {
-        return columnRepository.createPending(column);
+        Optional<Column> maybeNewColumn = columnRepository.createPending(column);
+        if (maybeNewColumn.isPresent()) {
+            boardColumnsCache = null; // reset cached columns
+        }
+        return maybeNewColumn;
     }
 
     public boolean moveCard(Card card, Column column) {
-        return cardRepository.moveCard(card, column);
+        boolean wasCardMoved = cardRepository.moveCard(card, column);
+        if (wasCardMoved) {
+            cardsAllCache = null;
+        }
+        return wasCardMoved;
+    }
+
+    public List<Column> boardColumns(Board board) {
+        if (boardColumnsCache == null) {
+            boardColumnsCache = columnRepository.getAllFromBoard(board);
+        }
+        return boardColumnsCache;
+    }
+
+    public List<Card> cardsAll(Board board) {
+        if (cardsAllCache == null) {
+            cardsAllCache = cardRepository.getCardsFromColumns(boardColumns(board));
+        }
+        return cardsAllCache;
+    }
+
+    public void clearCaches() {
+        boardColumnsCache = null;
+        cardsAllCache = null;
+    }
+
+    public boolean blockCard(Board board, Card card) {
+        boolean wasBlocked = cardRepository.blockCard(board, card);
+        if (wasBlocked) {
+            cardsAllCache = null; // reset cached cards
+        }
+        return wasBlocked;
     }
 }

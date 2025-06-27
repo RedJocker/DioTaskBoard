@@ -47,7 +47,7 @@ public class MainMenu extends Menu<Void> {
     }
     private static final String welcome = "\n\n\tT  A  S  K -> B  O  A  R  D\n\n";
     private static final String startMenu =
-            "Main Menu:\n" + choices() + "\n";
+            "Main Menu:\n" + choices();
     private static final String bye = "\n\n\tBye\n\n";
 
     private final BoardMenu boardMenu;
@@ -109,6 +109,7 @@ public class MainMenu extends Menu<Void> {
                 final Optional<Board> maybeBoard = selectBoardIoform.collect(boards);
 
                 if (maybeBoard.isPresent()) {
+                    viewModel.clearCaches();
                     boardMenu.loop(viewModel, maybeBoard.get());
                 } else {
                     io.printf("\nBoard not found");
