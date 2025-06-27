@@ -2,6 +2,7 @@ package org.play.task.board.presentation.cli.menu;
 
 import org.play.task.board.model.Board;
 import org.play.task.board.presentation.cli.BoardViewModel;
+import org.play.task.board.presentation.cli.form.CreateBoardIoForm;
 import org.play.task.board.presentation.cli.form.SelectBoardIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.springframework.stereotype.Component;
@@ -9,10 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.EXCLUDE_BOARD;
-import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.SELECT_BOARD;
+import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.CREATE_BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.DEBUG;
+import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.EXCLUDE_BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.EXIT;
+import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.SELECT_BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.choices;
 
 
@@ -22,8 +24,9 @@ public class MainMenu extends Menu<Void> {
     enum Choice {
         EXIT(0, "Exit"),
         SELECT_BOARD(1, "Select Board"),
-        EXCLUDE_BOARD(2, "Exclude Board"),
-        DEBUG(3, "Debug");
+        CREATE_BOARD(2, "Create Board"),
+        EXCLUDE_BOARD(3, "Exclude Board"),
+        DEBUG(4, "Debug");
 
         private final int menuId;
         private final String menuStr;
@@ -50,10 +53,13 @@ public class MainMenu extends Menu<Void> {
 
     private final SelectBoardIoForm selectBoardIoform;
 
-    MainMenu(IoAdapter ioAdapter, BoardMenu boardMenu, SelectBoardIoForm selectBoardIoform) {
+    private final CreateBoardIoForm createBoardIoForm;
+
+    MainMenu(IoAdapter ioAdapter, BoardMenu boardMenu, SelectBoardIoForm selectBoardIoform, CreateBoardIoForm createBoardIoForm) {
         super(ioAdapter);
         this.boardMenu = boardMenu;
         this.selectBoardIoform = selectBoardIoform;
+        this.createBoardIoForm = createBoardIoForm;
     }
 
     public void displayWelcome() {
@@ -104,7 +110,20 @@ public class MainMenu extends Menu<Void> {
                 if (maybeBoard.isPresent()) {
                     boardMenu.loop(viewModel, maybeBoard.get());
                 } else {
-                    io.printf("Board not found");
+                    io.printf("\nBoard not found");
+                }
+
+            } else if (choice == CREATE_BOARD.menuId) {
+                Optional<Board> maybeBoard = createBoardIoForm.collect(null);
+                if (maybeBoard.isPresent()) {
+                    maybeBoard = viewModel.addBoard(maybeBoard.get());
+                } else {
+                    io.printf("\nBoard creation cancelled or failed");
+                }
+                if (maybeBoard.isPresent()) {
+                    io.printf("\nBoard created successfully: %s\n", maybeBoard.get().name());
+                } else {
+                    io.printf("\nFailed to create board");
                 }
 
             } else if (choice == DEBUG.menuId) {

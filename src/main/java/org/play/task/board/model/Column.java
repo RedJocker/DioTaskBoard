@@ -3,6 +3,8 @@ package org.play.task.board.model;
 import org.play.task.board.util.Either;
 
 public class Column  {
+
+
     public enum Type {
         INITIAL,
         PENDING,
@@ -75,5 +77,9 @@ public class Column  {
 
     public int order() {
         return order;
+    }
+
+    public long boardId() {
+        return boardId;
     }
 }

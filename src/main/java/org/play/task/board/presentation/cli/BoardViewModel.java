@@ -51,4 +51,8 @@ public class BoardViewModel {
     public boolean excludeBoard(Board board) {
         return boardRepository.deleteBoard(board);
     }
+
+    public Optional<Board> addBoard(Board board) {
+        return boardRepository.save(board);
+    }
 }
