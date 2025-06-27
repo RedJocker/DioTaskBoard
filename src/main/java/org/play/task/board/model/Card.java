@@ -1,6 +1,8 @@
 package org.play.task.board.model;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public record Card(Long cardId, String name, String description, OffsetDateTime createdAt, boolean isBlocked, Long columnId) {
 
@@ -10,5 +12,13 @@ public record Card(Long cardId, String name, String description, OffsetDateTime 
 
     public static boolean validDescription(String description) {
         return description != null && !description.isBlank();
+    }
+
+    public static Optional<Card> findCardByNameOrId(List<Card> cards, String nameOrId) {
+        return cards.stream()
+                .filter(card -> card.name().equalsIgnoreCase(nameOrId)
+                        || card.cardId.toString().equals(nameOrId))
+                .findFirst();
+
     }
 }

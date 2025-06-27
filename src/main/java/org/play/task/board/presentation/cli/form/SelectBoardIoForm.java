@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static org.play.task.board.presentation.cli.menu.BoardMenu.LIST_ITEM_MS1;
+
 @Component
 @Scope("singleton")
 public class SelectBoardIoForm extends IoForm<Optional<Board>, List<Board>> {
@@ -21,7 +23,7 @@ public class SelectBoardIoForm extends IoForm<Optional<Board>, List<Board>> {
     public Optional<Board> collect(List<Board> boards) {
         io.printf("\nChoose a board:\n");
         for (Board board : boards) {
-            io.printf("\t- (%d) %s\n", board.id(), board.name());
+            io.printf(LIST_ITEM_MS1, board.id(), board.name());
         }
 
 
