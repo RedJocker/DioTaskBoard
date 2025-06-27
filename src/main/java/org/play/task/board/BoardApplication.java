@@ -22,7 +22,7 @@ public class BoardApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		new SpringApplicationBuilder(BoardApplication.class)
-				.headless(false)
+				.headless(true)
 				.web(WebApplicationType.NONE)
 				.run(args);
 	}
