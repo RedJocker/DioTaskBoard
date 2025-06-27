@@ -29,6 +29,27 @@ public class Column  {
         );
     }
 
+    public static Column next(List<Column> boardColumns, Column column) {
+        Optional<Column> next = boardColumns.stream()
+                .dropWhile(col -> col.order() <= column.order())
+                .findFirst();
+        return next.orElse(column);
+    }
+
+    public static Column previous(List<Column> boardColumns, Column column) {
+        List<Column> previousList = boardColumns.stream()
+                .takeWhile(col -> col.order() < column.order())
+                .toList();
+
+        return previousList.isEmpty() ? column : previousList.getLast();
+    }
+
+    public static Optional<Column> findColumnById(List<Column> boardColumns, Long id) {
+        return boardColumns.stream()
+                .filter(col -> col.columnId().equals(id))
+                .findFirst();
+    }
+
     public enum Type {
         INITIAL,
         PENDING,

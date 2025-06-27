@@ -63,4 +63,8 @@ public class BoardViewModel {
     public Optional<Column> onCreateColumn(Column column) {
         return columnRepository.createPending(column);
     }
+
+    public boolean moveCard(Card card, Column column) {
+        return cardRepository.moveCard(card, column);
+    }
 }

@@ -70,4 +70,15 @@ public class CardRepository {
                 .query(Card.class)
                 .list();
     }
+
+    public boolean moveCard(Card card, Column column) {
+        if (card == null || column == null) {
+            return false;
+        }
+
+        return jdbcClient.sql("UPDATE CARD SET COLUMN_ID = ? WHERE CARD_ID = ?")
+                .param(column.columnId())
+                .param(card.cardId())
+                .update() == 1 ;
+    }
 }
