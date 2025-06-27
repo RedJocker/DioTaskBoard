@@ -7,6 +7,7 @@ import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.form.CardCreateIoForm;
 import org.play.task.board.presentation.cli.form.ColumnCreateIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
+import org.play.task.board.util.Either;
 import org.play.task.board.util.Pair;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -15,11 +16,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.CREATE_CARD;
-import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.CREATE_COLUMN;
-import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.EXIT;
-import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMNS_FULL;
-import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMNS_SHORT;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.choices;
 
 
@@ -36,7 +32,8 @@ public class BoardMenu extends Menu<Board> {
         CREATE_CARD(1, "Create Card"),
         CREATE_COLUMN(2, "Create Column"),
         SHOW_COLUMNS_SHORT(3, "Show Columns List"),
-        SHOW_COLUMNS_FULL(4, "Show Columns Full")
+        SHOW_COLUMNS_FULL(4, "Show Columns Full"),
+        DELETE_COLUMN(5, "Delete Column"),
         ;
 
         private final int menuId;
@@ -89,23 +86,46 @@ public class BoardMenu extends Menu<Board> {
 
         int choice = -1;
         while (choice != 0) {
-
             choice = this.promptMenuChoice();
-            if (choice == EXIT.menuId) {
-                break;
+            switch (Choice.values()[choice]) {
+                case EXIT -> { return; }
+                case CREATE_CARD -> createCard(viewModel, board);
+                case CREATE_COLUMN -> createColumn(viewModel, board);
+                case SHOW_COLUMNS_SHORT -> showColumnsShort(viewModel, board);
+                case SHOW_COLUMNS_FULL -> showColumnsFull(viewModel, board);
+                case DELETE_COLUMN -> deleteColumn(viewModel, board);
+                default -> {}
             }
+        }
+    }
 
-            if (choice == CREATE_CARD.menuId) {
-                createCard(viewModel, board);
-            } else if (choice == CREATE_COLUMN.menuId) {
-                createColumn(viewModel, board);
-            } else if (choice == SHOW_COLUMNS_SHORT.menuId) {
-                showColumnsShort(viewModel, board);
-            }
+    private void deleteColumn(BoardViewModel viewModel, Board board) {
+        io.printf("Delete Column:\n");
+        List<Column> columns = viewModel.boardColumns(board);
+        if (columns.isEmpty()) {
+            io.printf("No columns to delete\n");
+            return;
+        }
 
-            if (choice == SHOW_COLUMNS_FULL.menuId) {
-                showColumnsFull(viewModel, board);
+        for (Column column : columns) {
+            io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
+        }
+
+        String input = io.readLine().trim();
+        if (input.isEmpty())
+            return;
+
+        Optional<Column> maybeColumn = Column.findColumnByNameOrId(columns, input);
+        if (maybeColumn.isPresent()) {
+            Column column = maybeColumn.get();
+            Either<Column, String> eitherColumnOrError = viewModel.deleteColumn(board, column);
+            if (eitherColumnOrError.isGood()) {
+                io.printf("Column %s deleted successfully\n", eitherColumnOrError.ok().name());
+            } else {
+                io.printf(eitherColumnOrError.error() + "\n");
             }
+        } else {
+            io.printf("Column not found: %s\n", input);
         }
     }
 

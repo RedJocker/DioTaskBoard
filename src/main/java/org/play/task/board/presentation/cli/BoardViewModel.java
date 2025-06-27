@@ -7,6 +7,7 @@ import org.play.task.board.model.Column;
 import org.play.task.board.repository.BoardRepository;
 import org.play.task.board.repository.CardRepository;
 import org.play.task.board.repository.ColumnRepository;
+import org.play.task.board.util.Either;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -97,5 +98,21 @@ public class BoardViewModel {
             cardsAllCache = null; // reset cached cards
         }
         return wasBlocked;
+    }
+
+    public Either<Column, String> deleteColumn(Board board, Column column) {
+        if (cardsAll(board).stream().anyMatch(card -> card.columnId().equals(column.columnId()))) {
+            return Either.bad("Cannot delete column " + column.name() + " with cards in it");
+        }
+        if (column.type() != Column.Type.PENDING) {
+            return Either.bad("Can only delete pending type columns");
+        }
+        boolean wasDeleted = columnRepository.deleteColumn(board, column);
+        if (wasDeleted) {
+            boardColumnsCache = null; // reset cached columns
+            return Either.good(column);
+        } else {
+            return Either.bad("Failed to delete column");
+        }
     }
 }

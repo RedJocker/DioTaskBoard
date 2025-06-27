@@ -102,4 +102,34 @@ public class ColumnRepository {
             }
         });
     }
+
+    public boolean deleteColumn(Board board, Column column) {
+        if (board == null || column == null || column.type() != Column.Type.PENDING) {
+            return false;
+        }
+
+        return transactionTemplate.execute(status -> {
+            try {
+                int affectedRows = jdbcClient.sql("DELETE FROM COLUMN WHERE BOARD_ID = ? AND COLUMN_ID = ?")
+                        .param(board.id())
+                        .param(column.columnId())
+                        .update();
+                if (affectedRows != 1) {
+                    status.setRollbackOnly();
+                    return false;
+                }
+                // Adjust order of remaining columns
+                jdbcClient.sql("UPDATE COLUMN SET COLUMN_ORDER = COLUMN_ORDER - 1 " +
+                                "WHERE BOARD_ID = ? AND COLUMN_ORDER > ?")
+                        .param(board.id())
+                        .param(column.order())
+                        .update();
+                return true;
+            } catch (Exception e) {
+                status.setRollbackOnly();
+                e.printStackTrace();
+                return false;
+            }
+        });
+    }
 }
