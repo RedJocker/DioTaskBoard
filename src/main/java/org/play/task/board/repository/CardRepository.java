@@ -1,6 +1,7 @@
 package org.play.task.board.repository;
 
 import org.play.task.board.model.Card;
+import org.play.task.board.model.Column;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -52,5 +53,21 @@ public class CardRepository {
                 newCard.isBlocked(),
                 columnId
         ));
+    }
+
+    public List<Card> getCardsFromColumns(List<Column> boardColumns) {
+        if (boardColumns == null || boardColumns.isEmpty()) {
+            return List.of();
+        }
+
+        String columnIds = boardColumns.stream()
+                .map(Column::columnId)
+                .map(String::valueOf)
+                .reduce((a, b) -> a + "," + b)
+                .orElse("");
+
+        return jdbcClient.sql("SELECT * FROM CARD WHERE COLUMN_ID IN (" + columnIds + ") ORDER BY COLUMN_ID, CARD_ID")
+                .query(Card.class)
+                .list();
     }
 }

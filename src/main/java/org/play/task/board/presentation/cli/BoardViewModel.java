@@ -55,4 +55,8 @@ public class BoardViewModel {
     public Optional<Board> addBoard(Board board) {
         return boardRepository.save(board);
     }
+
+    public List<Card> getCardsForColumns(List<Column> boardColumns) {
+        return cardRepository.getCardsFromColumns(boardColumns);
+    }
 }

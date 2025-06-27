@@ -59,7 +59,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
 **** Menu de manipulação de =board selecionado=
   - O menu deve permitir
     - mover o card para próxima coluna,
-    - [ ] mostrar colunas do board,
+    - [X] mostrar colunas do board,
     - mostrar detalhes da coluna,
     - mostrar detalhes do card,
     - [X] criar um card,
