@@ -58,6 +58,9 @@ public class BoardMenu extends Menu<Board> {
 
     private final ColumnCreateIoForm columnCreateIoForm;
 
+    List<Column> boardColumns = null;
+    List<Card> cardsAll = null;
+
     BoardMenu(IoAdapter ioAdapter, CardCreateIoForm cardCreateIoForm, ColumnCreateIoForm columnCreateIoForm) {
         super(ioAdapter);
         this.cardCreateIoForm = cardCreateIoForm;
@@ -76,8 +79,7 @@ public class BoardMenu extends Menu<Board> {
 
     @Override
     public void loop(BoardViewModel viewModel, Board board) {
-        List<Column> boardColumns = null;
-        List<Card> cardsAll = null;
+        resetCache();
 
         int choice = -1;
         while (choice != 0) {
@@ -85,74 +87,110 @@ public class BoardMenu extends Menu<Board> {
             choice = this.promptMenuChoice();
             if (choice == EXIT.menuId) {
                 break;
-            } else if (choice == CREATE_CARD.menuId) {
-                Optional<Card> maybeNewCard = cardCreateIoForm.collect(null);
-                if (maybeNewCard.isEmpty()) {
-                    io.printf("Card creation cancelled\n");
-                    continue;
-                }
+            }
 
-                if (boardColumns == null) {
-                    boardColumns = viewModel.getColumns(board);
-                }
-                // always creates card on initial column
-                Column initialColumn = boardColumns.getFirst();
-                maybeNewCard = viewModel.onCreateCard(maybeNewCard.get(), initialColumn);
-                if (maybeNewCard.isPresent()) {
-                    io.printf("Card created: %s\n", maybeNewCard.get().toString());
-                    cardsAll = null; // reset cardsAll to force reloading
-                } else {
-                    io.printf("Card creation failed\n");
-                }
+            //bellow choices depend on boardColumns cache
+            ensureBoardColumns(viewModel, board);
+
+            if (choice == CREATE_CARD.menuId) {
+                createCard(viewModel, board);
             } else if (choice == CREATE_COLUMN.menuId) {
-                if (boardColumns == null) {
-                    boardColumns = viewModel.getColumns(board);
-                }
-                Optional<Column> maybeNewColumn = columnCreateIoForm.collect(new Pair<>(board, boardColumns));
-                if (maybeNewColumn.isEmpty()) {
-                    io.printf("Column creation cancelled\n");
-                    continue;
-                }
-                maybeNewColumn = viewModel.onCreateColumn(maybeNewColumn.get());
-                if (maybeNewColumn.isPresent()) {
-                    io.printf("Column created: %s\n", maybeNewColumn.get().name());
-                    boardColumns = null; // reset boardColumns to force reloading
-                } else {
-                    io.printf("Column creation failed\n");
-                }
+                createColumn(viewModel, board);
             } else if (choice == SHOW_COLUMNS_SHORT.menuId) {
-                io.printf("Columns (%s):\n", board.name());
-                if (boardColumns == null) {
-                    boardColumns = viewModel.getColumns(board);
-                }
-                boardColumns.forEach(column -> {
-                    io.printf("\t- (%d) %s\n", column.columnId(), column.name());
-                });
-                io.printf("\n");
-            } else if (choice == SHOW_COLUMNS_FULL.menuId) {
+                showColumnsShort(board);
+            }
 
-                // retrieve columns with cards
-                if (boardColumns == null) {
-                    boardColumns = viewModel.getColumns(board);
-                }
-                if (cardsAll == null) {
-                    cardsAll = viewModel.getCardsForColumns(boardColumns);
-                }
-                io.printf("Columns (%s):\n", board.name());
-                for (Column column : boardColumns) {
-                    io.printf("\t- (%d) %s\n", column.columnId(), column.name());
-                    List<Card> cardsInColumn = cardsAll.stream()
-                            .filter(card -> card.columnId().equals(column.columnId()))
-                            .toList();
-                    if (cardsInColumn.isEmpty()) {
-                        io.printf("\t\tNo cards in this column\n");
-                    } else {
-                        for (Card card : cardsInColumn) {
-                            io.printf("\t\t- (%d) %s\n", card.cardId(), card.name());
-                        }
-                    }
+            // bellow choices depends on cardsAll cache
+            ensureCardsAll(viewModel);
+
+            if (choice == SHOW_COLUMNS_FULL.menuId) {
+                showColumnsFull(board);
+            }
+        }
+    }
+
+    private void showColumnsFull(Board board) {
+        // retrieve columns with cards
+        io.printf("Columns (%s):\n", board.name());
+        for (Column column : boardColumns) {
+            io.printf("\t- (%d) %s\n", column.columnId(), column.name());
+            List<Card> cardsInColumn = cardsAll.stream()
+                    .filter(card -> card.columnId().equals(column.columnId()))
+                    .toList();
+            if (cardsInColumn.isEmpty()) {
+                io.printf("\t\tNo cards in this column\n");
+            } else {
+                for (Card card : cardsInColumn) {
+                    io.printf("\t\t- (%d) %s\n", card.cardId(), card.name());
                 }
             }
+        }
+    }
+
+    private void showColumnsShort(Board board) {
+        io.printf("Columns (%s):\n", board.name());
+        boardColumns.forEach(column -> {
+            io.printf("\t- (%d) %s\n", column.columnId(), column.name());
+        });
+        io.printf("\n");
+    }
+
+    private void createCard(BoardViewModel viewModel, Board board) {
+        Optional<Card> maybeNewCard = cardCreateIoForm.collect(null);
+        if (maybeNewCard.isEmpty()) {
+            io.printf("Card creation cancelled\n");
+            return;
+        }
+
+        // always creates card on initial column
+        Column initialColumn = boardColumns.getFirst();
+        maybeNewCard = viewModel.onCreateCard(maybeNewCard.get(), initialColumn);
+        if (maybeNewCard.isPresent()) {
+            io.printf("Card created: %s\n", maybeNewCard.get().toString());
+            resetCardsAllCache();
+        } else {
+            io.printf("Card creation failed\n");
+        }
+    }
+
+    private void createColumn(BoardViewModel viewModel, Board board) {
+
+        Optional<Column> maybeNewColumn = columnCreateIoForm.collect(new Pair<>(board, boardColumns));
+        if (maybeNewColumn.isEmpty()) {
+            io.printf("Column creation cancelled\n");
+            return;
+        }
+        maybeNewColumn = viewModel.onCreateColumn(maybeNewColumn.get());
+        if (maybeNewColumn.isPresent()) {
+            io.printf("Column created: %s\n", maybeNewColumn.get().name());
+            resetBoardColumnsCache();
+        } else {
+            io.printf("Column creation failed\n");
+        }
+    }
+
+    private void resetCache() {
+        this.boardColumns = null;
+        this.cardsAll = null;
+    }
+
+    private void resetCardsAllCache() {
+        this.cardsAll = null;
+    }
+
+    private void resetBoardColumnsCache() {
+        this.boardColumns = null;
+    }
+
+    private void ensureBoardColumns(BoardViewModel viewModel, Board board) {
+        if (boardColumns == null || boardColumns.isEmpty()) {
+            boardColumns = viewModel.getColumns(board);
+        }
+    }
+
+    private void ensureCardsAll(BoardViewModel viewModel) {
+        if (cardsAll == null) {
+            cardsAll = viewModel.getCardsForColumns(boardColumns);
         }
     }
 }

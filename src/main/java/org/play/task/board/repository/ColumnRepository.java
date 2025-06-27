@@ -37,19 +37,24 @@ public class ColumnRepository {
     }
 
     public List<Column> getAllFromBoard(Board board) {
-        return jdbcClient.sql("SELECT " +
-                        "column_id, " +
-                        "column_type as `type`, " +
-                        "name, " +
-                        "created_at, " +
-                        "column_order as `order`, " +
-                        "board_id " +
-                        "FROM `COLUMN` " +
-                        "WHERE board_id = ? " +
-                        "ORDER BY column_order"
-                ).param(board.id())
-                .query(Column.class)
-                .list();
+        try {
+            return jdbcClient.sql("SELECT " +
+                            "column_id, " +
+                            "column_type as `type`, " +
+                            "name, " +
+                            "created_at, " +
+                            "column_order as `order`, " +
+                            "board_id " +
+                            "FROM `COLUMN` " +
+                            "WHERE board_id = ? " +
+                            "ORDER BY column_order"
+                    ).param(board.id())
+                    .query(Column.class)
+                    .list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     public Optional<Column> createPending(Column column) {
