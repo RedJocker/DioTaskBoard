@@ -44,10 +44,9 @@ public class ColumnCreateIoForm extends IoForm<Optional<Column>, Pair<Board, Lis
                     .takeWhile(col -> col.type() != Column.Type.FINAL && col.type() != Column.Type.CANCELED)
                     .forEach(col -> io.printf("\t\t\t- (%d) %s\n", col.columnId(), col.name()));
             final String columnBeforeEitherNameOrId = io.readLine().trim();
-            final Optional<Column> maybeColumnBefore = columns.stream()
-                    .filter(col -> col.name().equalsIgnoreCase(columnBeforeEitherNameOrId)
-                            || col.columnId().toString().equals(columnBeforeEitherNameOrId))
-                    .findFirst();
+            final Optional<Column> maybeColumnBefore = Column
+                    .findColumnByNameOrId(columns, columnBeforeEitherNameOrId);
+
             if (maybeColumnBefore.isEmpty()) {
                 io.printf("\tWas not found column with name or id: '%s'\n", columnBeforeEitherNameOrId);
                 if (tryAgain()) {

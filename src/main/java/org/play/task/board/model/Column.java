@@ -2,6 +2,9 @@ package org.play.task.board.model;
 
 import org.play.task.board.util.Either;
 
+import java.util.List;
+import java.util.Optional;
+
 public class Column  {
 
     public static final int INITIAL_ORDER = 0;
@@ -47,6 +50,13 @@ public class Column  {
         this.name = name;
         this.order = order;
         this.boardId = boardId;
+    }
+
+    public static Optional<Column> findColumnByNameOrId(List<Column> columns, String nameOrId) {
+        return columns.stream()
+                .filter(col -> col.name().equalsIgnoreCase(nameOrId)
+                        || col.columnId().toString().equals(nameOrId))
+                .findFirst();
     }
 
     public static Column initial(long boardId) {
