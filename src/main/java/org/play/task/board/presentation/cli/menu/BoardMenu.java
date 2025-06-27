@@ -5,7 +5,9 @@ import org.play.task.board.model.Card;
 import org.play.task.board.model.Column;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.form.CardCreateIoForm;
+import org.play.task.board.presentation.cli.form.ColumnCreateIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
+import org.play.task.board.util.Pair;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.CREATE_CARD;
+import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.CREATE_COLUMN;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.EXIT;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMNS_FULL;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMNS_SHORT;
@@ -26,8 +29,9 @@ public class BoardMenu extends Menu<Board> {
     enum Choice {
         EXIT(0, "Go Back"),
         CREATE_CARD(1, "Create Card"),
-        SHOW_COLUMNS_SHORT(2, "Show Columns"),
-        SHOW_COLUMNS_FULL(3, "Show Columns Detailed"),
+        CREATE_COLUMN(2, "Create Column"),
+        SHOW_COLUMNS_SHORT(3, "Show Columns"),
+        SHOW_COLUMNS_FULL(4, "Show Columns Detailed"),
         ;
 
         private final int menuId;
@@ -52,10 +56,12 @@ public class BoardMenu extends Menu<Board> {
 
     private final CardCreateIoForm cardCreateIoForm;
 
+    private final ColumnCreateIoForm columnCreateIoForm;
 
-    BoardMenu(IoAdapter ioAdapter, CardCreateIoForm cardCreateIoForm) {
+    BoardMenu(IoAdapter ioAdapter, CardCreateIoForm cardCreateIoForm, ColumnCreateIoForm columnCreateIoForm) {
         super(ioAdapter);
         this.cardCreateIoForm = cardCreateIoForm;
+        this.columnCreateIoForm = columnCreateIoForm;
     }
 
     @Override
@@ -70,9 +76,7 @@ public class BoardMenu extends Menu<Board> {
 
     @Override
     public void loop(BoardViewModel viewModel, Board board) {
-        List<Column> boardColumns = viewModel.getColumns(board);
-        io.printf("%s\n", boardColumns);
-
+        List<Column> boardColumns = null;
         List<Card> cardsAll = null;
 
         int choice = -1;
@@ -88,6 +92,10 @@ public class BoardMenu extends Menu<Board> {
                     continue;
                 }
 
+                if (boardColumns == null) {
+                    boardColumns = viewModel.getColumns(board);
+                }
+                // always creates card on initial column
                 Column initialColumn = boardColumns.getFirst();
                 maybeNewCard = viewModel.onCreateCard(maybeNewCard.get(), initialColumn);
                 if (maybeNewCard.isPresent()) {
@@ -96,8 +104,27 @@ public class BoardMenu extends Menu<Board> {
                 } else {
                     io.printf("Card creation failed\n");
                 }
+            } else if (choice == CREATE_COLUMN.menuId) {
+                if (boardColumns == null) {
+                    boardColumns = viewModel.getColumns(board);
+                }
+                Optional<Column> maybeNewColumn = columnCreateIoForm.collect(new Pair<>(board, boardColumns));
+                if (maybeNewColumn.isEmpty()) {
+                    io.printf("Column creation cancelled\n");
+                    continue;
+                }
+                maybeNewColumn = viewModel.onCreateColumn(maybeNewColumn.get());
+                if (maybeNewColumn.isPresent()) {
+                    io.printf("Column created: %s\n", maybeNewColumn.get().name());
+                    boardColumns = null; // reset boardColumns to force reloading
+                } else {
+                    io.printf("Column creation failed\n");
+                }
             } else if (choice == SHOW_COLUMNS_SHORT.menuId) {
                 io.printf("Columns (%s):\n", board.name());
+                if (boardColumns == null) {
+                    boardColumns = viewModel.getColumns(board);
+                }
                 boardColumns.forEach(column -> {
                     io.printf("\t- (%d) %s\n", column.columnId(), column.name());
                 });
@@ -105,6 +132,9 @@ public class BoardMenu extends Menu<Board> {
             } else if (choice == SHOW_COLUMNS_FULL.menuId) {
 
                 // retrieve columns with cards
+                if (boardColumns == null) {
+                    boardColumns = viewModel.getColumns(board);
+                }
                 if (cardsAll == null) {
                     cardsAll = viewModel.getCardsForColumns(boardColumns);
                 }

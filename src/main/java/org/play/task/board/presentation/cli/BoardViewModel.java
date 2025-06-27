@@ -59,4 +59,8 @@ public class BoardViewModel {
     public List<Card> getCardsForColumns(List<Column> boardColumns) {
         return cardRepository.getCardsFromColumns(boardColumns);
     }
+
+    public Optional<Column> onCreateColumn(Column column) {
+        return columnRepository.createPending(column);
+    }
 }

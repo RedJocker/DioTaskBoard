@@ -4,6 +4,27 @@ import org.play.task.board.util.Either;
 
 public class Column  {
 
+    public static final int INITIAL_ORDER = 0;
+    public static final int FINAL_ORDER = Integer.MAX_VALUE - 1;
+    public static final int CANCELED_ORDER = Integer.MAX_VALUE;
+
+
+    public static boolean validName(String cardName) {
+        if (cardName == null || cardName.isBlank())
+            return false;
+        final String nameNorm = cardName.trim().toLowerCase();
+        return !nameNorm.equals("initial") && !nameNorm.equals("final") && !nameNorm.equals("canceled");
+    }
+
+    public static Column withId(Long id, Column column) {
+        return new Column(
+                id,
+                column.type,
+                column.name,
+                column.order,
+                column.boardId
+        );
+    }
 
     public enum Type {
         INITIAL,
@@ -20,7 +41,7 @@ public class Column  {
 
     final private long boardId;
 
-    private Column (Long columnId, Type type, String name, int order, long boardId) {
+    public Column(Long columnId, Type type, String name, int order, long boardId) {
         this.columnId = columnId;
         this.type = type;
         this.name = name;
@@ -29,15 +50,15 @@ public class Column  {
     }
 
     public static Column initial(long boardId) {
-        return new Column(null, Type.INITIAL, "initial", 0, boardId);
+        return new Column(null, Type.INITIAL, "initial", INITIAL_ORDER, boardId);
     }
 
     public static Column finall(long boardId) {
-        return new Column(null, Type.FINAL, "final", Integer.MAX_VALUE - 1, boardId);
+        return new Column(null, Type.FINAL, "final", FINAL_ORDER, boardId);
     }
 
     public static Column canceled(long boardId) {
-        return new Column(null, Type.CANCELED, "canceled", Integer.MAX_VALUE, boardId);
+        return new Column(null, Type.CANCELED, "canceled", CANCELED_ORDER, boardId);
     }
 
     public static Either<Column, String> pending(String name, int order, long boardId) {
