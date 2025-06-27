@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static org.play.task.board.presentation.cli.menu.BoardMenu.LIST_ITEM_MS1;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.CREATE_BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.DEBUG;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.EXCLUDE_BOARD;
@@ -39,14 +40,14 @@ public class MainMenu extends Menu<Void> {
         static String choices() {
             StringBuilder builder = new StringBuilder();
             for (Choice choice : Choice.values()) {
-                builder.append(String.format("\n\t- (%d) %s", choice.menuId, choice.menuStr));
+                builder.append(String.format(LIST_ITEM_MS1, choice.menuId, choice.menuStr));
             }
             return builder.toString();
         }
     }
     private static final String welcome = "\n\n\tT  A  S  K -> B  O  A  R  D\n\n";
     private static final String startMenu =
-            "Main Menu:" + choices() + "\n";
+            "Main Menu:\n" + choices() + "\n";
     private static final String bye = "\n\n\tBye\n\n";
 
     private final BoardMenu boardMenu;

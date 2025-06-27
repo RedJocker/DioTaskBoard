@@ -25,6 +25,8 @@ import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.choices
 @Component
 @Scope("singleton")
 public class BoardMenu extends Menu<Board> {
+    public static final String LIST_ITEM_MS1 = "\t- (%d) %s\n";
+    public static final String BOARD_DETAILS_TITLE = "Columns (%s):\n";
 
     enum Choice {
         EXIT(0, "Go Back"),
@@ -45,14 +47,14 @@ public class BoardMenu extends Menu<Board> {
         static String choices() {
             StringBuilder builder = new StringBuilder();
             for (Choice choice : Choice.values()) {
-                builder.append(String.format("\n\t- (%d) %s", choice.menuId, choice.menuStr));
+                builder.append(String.format(LIST_ITEM_MS1, choice.menuId, choice.menuStr));
             }
             return builder.toString();
         }
     }
 
     private static final String startMenu =
-            "Board Menu:" + choices() + "\n";
+            "Board Menu:\n" + choices() + "\n";
 
     private final CardCreateIoForm cardCreateIoForm;
 
@@ -111,9 +113,9 @@ public class BoardMenu extends Menu<Board> {
 
     private void showColumnsFull(Board board) {
         // retrieve columns with cards
-        io.printf("Columns (%s):\n", board.name());
+        io.printf(BOARD_DETAILS_TITLE, board.name());
         for (Column column : boardColumns) {
-            io.printf("\t- (%d) %s\n", column.columnId(), column.name());
+            io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
             List<Card> cardsInColumn = cardsAll.stream()
                     .filter(card -> card.columnId().equals(column.columnId()))
                     .toList();
@@ -121,16 +123,16 @@ public class BoardMenu extends Menu<Board> {
                 io.printf("\t\tNo cards in this column\n");
             } else {
                 for (Card card : cardsInColumn) {
-                    io.printf("\t\t- (%d) %s\n", card.cardId(), card.name());
+                    io.printf("\t"+LIST_ITEM_MS1, card.cardId(), card.name());
                 }
             }
         }
     }
 
     private void showColumnsShort(Board board) {
-        io.printf("Columns (%s):\n", board.name());
+        io.printf(BOARD_DETAILS_TITLE, board.name());
         boardColumns.forEach(column -> {
-            io.printf("\t- (%d) %s\n", column.columnId(), column.name());
+            io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
         });
         io.printf("\n");
     }
