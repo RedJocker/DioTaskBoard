@@ -6,7 +6,6 @@ import org.play.task.board.model.Column;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.form.CardCreateIoForm;
 import org.play.task.board.presentation.cli.form.ColumnCreateIoForm;
-import org.play.task.board.presentation.cli.form.SelectColumnIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 import org.play.task.board.util.Pair;
 import org.springframework.context.annotation.Scope;
@@ -20,7 +19,6 @@ import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.CREATE_
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.EXIT;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMNS_FULL;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMNS_SHORT;
-import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.SHOW_COLUMN_DETAILS;
 import static org.play.task.board.presentation.cli.menu.BoardMenu.Choice.choices;
 
 
@@ -37,9 +35,7 @@ public class BoardMenu extends Menu<Board> {
         CREATE_CARD(1, "Create Card"),
         CREATE_COLUMN(2, "Create Column"),
         SHOW_COLUMNS_SHORT(3, "Show Columns"),
-        SHOW_COLUMNS_FULL(4, "Show Columns Detailed"),
-
-        SHOW_COLUMN_DETAILS(5, "Show Column Details")
+        SHOW_COLUMNS_FULL(4, "Show Columns Detailed")
         ;
 
         private final int menuId;
@@ -66,20 +62,16 @@ public class BoardMenu extends Menu<Board> {
 
     private final ColumnCreateIoForm columnCreateIoForm;
 
-    private final SelectColumnIoForm selectColumnIoForm;
-
     List<Column> boardColumns = null;
     List<Card> cardsAll = null;
 
     BoardMenu(IoAdapter ioAdapter,
               CardCreateIoForm cardCreateIoForm,
-              ColumnCreateIoForm columnCreateIoForm,
-              SelectColumnIoForm selectColumnIoForm) {
+              ColumnCreateIoForm columnCreateIoForm) {
 
         super(ioAdapter);
         this.cardCreateIoForm = cardCreateIoForm;
         this.columnCreateIoForm = columnCreateIoForm;
-        this.selectColumnIoForm = selectColumnIoForm;
     }
 
     @Override
@@ -113,17 +105,8 @@ public class BoardMenu extends Menu<Board> {
                 showColumnsShort(board);
             }
 
-
             if (choice == SHOW_COLUMNS_FULL.menuId) {
                 showColumnsFull(board);
-            } else if (choice == SHOW_COLUMN_DETAILS.menuId) {
-                Optional<Column> maybeColumn = selectColumnIoForm.collect(boardColumns);
-                if (maybeColumn.isPresent()) {
-                    showColumnDetails(maybeColumn.get());
-                } else {
-                    io.printf("Column not found\n");
-                }
-
             }
         }
     }
