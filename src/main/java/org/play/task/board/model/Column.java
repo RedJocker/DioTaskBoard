@@ -44,10 +44,10 @@ public class Column  {
         return previousList.isEmpty() ? column : previousList.getLast();
     }
 
-    public static Optional<Column> findColumnById(List<Column> boardColumns, Long id) {
+    public static Column findColumnById(List<Column> boardColumns, Long id) {
         return boardColumns.stream()
                 .filter(col -> col.columnId().equals(id))
-                .findFirst();
+                .findFirst().orElseThrow();
     }
 
     public enum Type {

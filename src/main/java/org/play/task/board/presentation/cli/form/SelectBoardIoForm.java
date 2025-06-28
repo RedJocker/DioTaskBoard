@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static org.play.task.board.presentation.cli.menu.BoardMenu.LIST_ITEM_MS1;
+import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenu.LIST_ITEM_MS1;
 
 @Component
 @Scope("singleton")

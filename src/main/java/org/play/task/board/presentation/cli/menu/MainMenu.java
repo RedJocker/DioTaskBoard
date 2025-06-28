@@ -5,12 +5,13 @@ import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.form.CreateBoardIoForm;
 import org.play.task.board.presentation.cli.form.SelectBoardIoForm;
 import org.play.task.board.presentation.cli.io.IoAdapter;
+import org.play.task.board.presentation.cli.menu.boardMenu.BoardMenu;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.play.task.board.presentation.cli.menu.BoardMenu.LIST_ITEM_MS1;
+import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenu.LIST_ITEM_MS1;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.CREATE_BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.DEBUG;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.EXCLUDE_BOARD;

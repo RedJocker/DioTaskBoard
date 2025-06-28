@@ -3,7 +3,7 @@ package org.play.task.board.presentation.cli.menu;
 import org.play.task.board.presentation.cli.BoardViewModel;
 import org.play.task.board.presentation.cli.io.IoAdapter;
 
-abstract class Menu<A> {
+public abstract class Menu<A> {
     protected static final String invalidChoice = "Invalid Choice\n";
     protected final IoAdapter io;
 
@@ -11,11 +11,11 @@ abstract class Menu<A> {
         this.io = ioAdapter;
     }
 
-    abstract String getMenuString();
+    protected abstract String getMenuString();
 
-    abstract Integer getMenuSize();
+    protected abstract Integer getMenuSize();
 
-    abstract void loop(BoardViewModel viewModel, A args);
+    protected abstract void loop(BoardViewModel viewModel, A args);
 
     protected int promptMenuChoice() {
         int option;
