@@ -21,4 +21,11 @@ public record Card(Long cardId, String name, String description, OffsetDateTime 
                 .findFirst();
 
     }
+
+    public static Card findCardById(List<Card> cards, long cardId) {
+        return cards.stream()
+                .filter(card -> card.cardId() == cardId)
+                .findFirst()
+                .orElseThrow();
+    }
 }

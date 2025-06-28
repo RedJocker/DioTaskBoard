@@ -204,8 +204,6 @@ public class BoardMenu extends Menu<Board> {
     }
 
     private void showColumnsFull(BoardViewModel viewModel, Board board) {
-        // retrieve columns with cards
-
         while (true) {
             io.printf(BOARD_DETAILS_TITLE, board.name());
             for (Column column : viewModel.boardColumns(board)) {
@@ -224,42 +222,64 @@ public class BoardMenu extends Menu<Board> {
             String input = io.readLine();
             if (input.trim().isEmpty())
                 return ;
-            else if(input.charAt(0) == '\t') {
+            else if (input.matches("^\t?m(ove)? \\d+$")) {
+                String[] parts = input.split(" ");
+
+                Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
+                if (maybeCard.isPresent()) {
+                    Card card = maybeCard.get();
+                    Optional<Column> maybeColumn = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
+                    if (maybeColumn.isPresent()) {
+                        Column nextColumn = Column.next(viewModel.boardColumns(board), maybeColumn.get());
+                        moveCard(viewModel, card, maybeColumn.get(), nextColumn);
+                        continue;
+                    }
+                }
+            } else if (input.matches("^\t?b(lock)? \\d+$")) {
+                String[] parts = input.split(" ");
+
+                Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
+                if (maybeCard.isPresent()) {
+                    Card card = maybeCard.get();
+                    cardBlock(viewModel, card, board);
+                    Card updatedCard = Card.findCardById(viewModel.cardsAll(board), card.cardId());
+                    showCardDetails(viewModel, updatedCard, board);
+                    continue;
+                }
+            } else if (input.matches("^\t?u(nblock)? \\d+$")) {
+                String[] parts = input.split(" ");
+
+                Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
+                if (maybeCard.isPresent()) {
+                    Card card = maybeCard.get();
+                    cardUnblock(viewModel, card, board);
+                    Card updatedCard = Card.findCardById(viewModel.cardsAll(board), card.cardId());
+                    showCardDetails(viewModel, updatedCard, board);
+                    continue;
+                }
+            } else if(input.charAt(0) == '\t') {
                 Optional<Card> maybeCard =
                         Card.findCardByNameOrId(viewModel.cardsAll(board), input.trim());
                 if (maybeCard.isPresent()) {
                     Card card = maybeCard.get();
                     showCardDetails(viewModel, card, board);
+                    continue;
                 } else {
                     io.printf("Card not found: %s\n", input.trim());
                     return;
                 }
-            } else {
-                if (input.matches("^move \\d+$")) {
-                    String[] parts = input.split(" ");
+            } else if (input.equals("l") || input.equals("list")) {
+                showColumnsShort(viewModel, board);
+                return;
+            }
 
-                    Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
-                    if (maybeCard.isPresent()) {
-                        Card card = maybeCard.get();
-                        Optional<Column> maybeColumn = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
-                        if (maybeColumn.isPresent()) {
-                            Column nextColumn = Column.next(viewModel.boardColumns(board), maybeColumn.get());
-                            moveCard(viewModel, card, maybeColumn.get(), nextColumn);
-                            continue;
-                        }
-                    }
-                } else if (input.equals("l") || input.equals("list")) {
-                    showColumnsShort(viewModel, board);
-                    return;
-                }
-                Optional<Column> columnByNameOrId =
-                        Column.findColumnByNameOrId(viewModel.boardColumns(board), input.trim());
-                if (columnByNameOrId.isPresent()) {
-                    showColumnDetails(viewModel, columnByNameOrId.get(), board);
-                } else {
-                    io.printf("Column not found: %s\n", input.trim());
-                    return;
-                }
+            Optional<Column> columnByNameOrId =
+                    Column.findColumnByNameOrId(viewModel.boardColumns(board), input.trim());
+            if (columnByNameOrId.isPresent()) {
+                showColumnDetails(viewModel, columnByNameOrId.get(), board);
+            } else {
+                io.printf("Column not found: %s\n", input.trim());
+                return;
             }
         }
 
@@ -290,8 +310,31 @@ public class BoardMenu extends Menu<Board> {
                     return;
                 }
             }
+        } else if (input.equals("u") || input.equals("unblock")) {
+            if (cardUnblock(viewModel, card, board)) {
+                Optional<Card> maybeBlockedCard = Card
+                        .findCardByNameOrId(viewModel.cardsAll(board), card.name());
+                if (maybeBlockedCard.isPresent()) {
+                    showCardDetails(viewModel, maybeBlockedCard.get(), board);
+                    return;
+                }
+            }
         }
         showCardDetails(viewModel, card, board);
+    }
+
+    private boolean cardUnblock(BoardViewModel viewModel, Card card, Board board) {
+        if (!card.isBlocked()) {
+            io.printf("Card %s is already unblocked\n", card.name());
+            return false;
+        }
+        boolean wasUnblocked = viewModel.unblockCard(board, card);
+        if (wasUnblocked) {
+            io.printf("Card %s unblocked successfully\n", card.name());
+        } else {
+            io.printf("Failed to unblock card %s\n", card.name());
+        }
+        return wasUnblocked;
     }
 
     private boolean cardBlock(BoardViewModel viewModel, Card card, Board board) {

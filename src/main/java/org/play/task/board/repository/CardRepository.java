@@ -83,13 +83,13 @@ public class CardRepository {
                 .update() == 1 ;
     }
 
-    public boolean blockCard(Board board, Card card) {
+    public boolean setIsBlockCard(Board board, Card card, boolean isBlocked) {
         if (board == null || card == null) {
             return false;
         }
         try {
             return jdbcClient.sql("UPDATE CARD SET IS_BLOCKED = ? WHERE CARD_ID = ?;")
-                    .param(true)
+                    .param(isBlocked)
                     .param(card.cardId())
                     .update() == 1;
         } catch (Exception e) {

@@ -93,11 +93,19 @@ public class BoardViewModel {
     }
 
     public boolean blockCard(Board board, Card card) {
-        boolean wasBlocked = cardRepository.blockCard(board, card);
+        boolean wasBlocked = cardRepository.setIsBlockCard(board, card, true);
         if (wasBlocked) {
             cardsAllCache = null; // reset cached cards
         }
         return wasBlocked;
+    }
+
+    public boolean unblockCard(Board board, Card card) {
+        boolean wasUnblocked = cardRepository.setIsBlockCard(board, card, false);
+        if (wasUnblocked) {
+            cardsAllCache = null; // reset cached cards
+        }
+        return wasUnblocked;
     }
 
     public Either<Column, String> deleteColumn(Board board, Column column) {
@@ -115,4 +123,6 @@ public class BoardViewModel {
             return Either.bad("Failed to delete column");
         }
     }
+
+
 }
