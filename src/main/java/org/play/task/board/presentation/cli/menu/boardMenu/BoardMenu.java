@@ -34,7 +34,7 @@ import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelpe
 @Scope("singleton")
 public class BoardMenu extends Menu<Board> {
     public static final String LIST_ITEM_MS1 = "\t- (%d) %s\n";
-    public static final String BOARD_DETAILS_TITLE = "Columns (%s):\n";
+    public static final String BOARD_DETAILS_TITLE = "Board (%s):\n";
 
     public static final String COLUMN_DETAILS_TITLE = "Column (%s):\n";
 
@@ -42,8 +42,8 @@ public class BoardMenu extends Menu<Board> {
         EXIT(0, "Go Back"),
         CREATE_CARD(1, "Create Card"),
         CREATE_COLUMN(2, "Create Column"),
-        SHOW_COLUMNS_SHORT(3, "Show Columns List"),
-        SHOW_COLUMNS_FULL(4, "Show Columns Full"),
+        SHOW_BOARD(3, "Show Board"),
+        SHOW_BOARD_FULL(4, "Show Board Full"),
         DELETE_COLUMN(5, "Delete Column"),
         ;
 
@@ -102,8 +102,8 @@ public class BoardMenu extends Menu<Board> {
                 case EXIT -> { return; }
                 case CREATE_CARD -> createCard(viewModel, board);
                 case CREATE_COLUMN -> createColumn(viewModel, board);
-                case SHOW_COLUMNS_SHORT -> showColumnsShort(viewModel, board);
-                case SHOW_COLUMNS_FULL -> showColumnsFull(viewModel, board);
+                case SHOW_BOARD -> showBoard(viewModel, board);
+                case SHOW_BOARD_FULL -> showBoardFull(viewModel, board);
                 case DELETE_COLUMN -> deleteColumn(viewModel, board);
                 default -> {}
             }
@@ -143,14 +143,14 @@ public class BoardMenu extends Menu<Board> {
         }
     }
 
-    private void showColumnsShort(BoardViewModel viewModel, Board board) {
+    private void showBoard(BoardViewModel viewModel, Board board) {
         displayListColumnsShort(io, viewModel, board);
 
         String input = io.readLine().trim();
         if (input.isEmpty())
             return ;
         else if (isListColumnsFull(input)) {
-            showColumnsFull(viewModel, board);
+            showBoardFull(viewModel, board);
             return;
         }
 
@@ -164,7 +164,7 @@ public class BoardMenu extends Menu<Board> {
         }
     }
 
-    private void showColumnsFull(BoardViewModel viewModel, Board board) {
+    private void showBoardFull(BoardViewModel viewModel, Board board) {
         while (true) {
             displayListColumnsFull(io, viewModel, board);
 
@@ -193,7 +193,7 @@ public class BoardMenu extends Menu<Board> {
                     return;
                 }
             } else if (isListColumnsShort(input)) {
-                showColumnsShort(viewModel, board);
+                showBoard(viewModel, board);
                 return;
             }
 
@@ -254,10 +254,10 @@ public class BoardMenu extends Menu<Board> {
                 showColumnDetails(viewModel, previous, board);
                 return;
             } else if (isListColumnsShort(input)) {
-                showColumnsShort(viewModel, board);
+                showBoard(viewModel, board);
                 return;
             } else if (isListColumnsFull(input)) {
-                showColumnsFull(viewModel, board);
+                showBoardFull(viewModel, board);
                 return;
             } else if(consumeCardArgCommand(io, input, viewModel, board, column)) {
                 continue;
