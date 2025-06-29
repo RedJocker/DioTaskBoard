@@ -109,11 +109,11 @@ public class BoardViewModel {
     }
 
     public Either<Column, String> deleteColumn(Board board, Column column) {
-        if (cardsAll(board).stream().anyMatch(card -> card.columnId().equals(column.columnId()))) {
-            return Either.bad("Cannot delete column " + column.name() + " with cards in it");
-        }
         if (column.type() != Column.Type.PENDING) {
             return Either.bad("Can only delete pending type columns");
+        }
+        if (cardsAll(board).stream().anyMatch(card -> card.columnId().equals(column.columnId()))) {
+            return Either.bad("Cannot delete column " + column.name() + " with cards in it");
         }
         boolean wasDeleted = columnRepository.deleteColumn(board, column);
         if (wasDeleted) {
