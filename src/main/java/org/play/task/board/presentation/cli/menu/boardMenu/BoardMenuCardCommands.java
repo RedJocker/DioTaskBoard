@@ -14,6 +14,7 @@ import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelpe
 import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isBlockArg;
 import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isCancel;
 import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isCancelArg;
+import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isMove;
 import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isMoveArg;
 import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isUnblock;
 import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenuHelper.isUnblockArg;
@@ -88,20 +89,29 @@ class BoardMenuCardCommands {
         return false;
     }
 
+    static boolean moveCard(IoAdapter io, BoardViewModel viewModel, Card card, Board board) {
+        Column column = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
+        Column next = Column.next(viewModel.boardColumns(board), column);
+        return moveCard(io, viewModel, card, column, next);
+    }
 
-    static void moveCard(IoAdapter io, BoardViewModel viewModel, Card card, Column column, Column nextColumn) {
+
+    static boolean moveCard(IoAdapter io, BoardViewModel viewModel, Card card, Column column, Column nextColumn) {
         if (column.type() == Column.Type.FINAL
                 || column.type() == Column.Type.CANCELED) {
             io.printf("Final and Canceled are permanent columns\n", card.name());
-            return;
+            return false;
         }
         if (card.isBlocked()) {
             io.printf("Card %s is blocked and cannot be moved\n", card.name());
+            return false;
         } else if (viewModel.moveCard(card, nextColumn)) {
             io.printf("Card %s moved to column %s\n", card.name(), nextColumn.name());
+            return true;
         } else {
             io.printf("Failed to move card %s to column %s\n", card.name(), nextColumn.name());
         }
+        return false;
     }
 
     static void showCardDetails(IoAdapter io, BoardViewModel viewModel, Card card, Board board, boolean shouldUpdateCard) {
@@ -127,6 +137,8 @@ class BoardMenuCardCommands {
             shouldUpdateCard = cardUnblock(io, viewModel, card, board);
         } else if (isCancel(input)) {
             shouldUpdateCard = cardCancel(io, viewModel, card, board);
+        } else if(isMove(input)) {
+            shouldUpdateCard = moveCard(io, viewModel, card, board);
         }
 
         showCardDetails(io, viewModel, card, board, shouldUpdateCard);

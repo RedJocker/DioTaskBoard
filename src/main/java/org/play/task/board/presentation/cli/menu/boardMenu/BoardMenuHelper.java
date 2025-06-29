@@ -14,6 +14,10 @@ import static org.play.task.board.presentation.cli.menu.boardMenu.BoardMenu.LIST
 
 class BoardMenuHelper {
 
+    static boolean isMove(String input) {
+        return input != null &&  input.matches("\\s*m(ove)?\\s*$");
+    }
+
     static boolean isBlock(String input) {
         return input != null && input.matches("^\\s*b(lock)?\\s*$");
     }
@@ -43,7 +47,7 @@ class BoardMenuHelper {
     }
 
     static boolean isCardArgsCommand(String input) {
-        return isMoveArg(input) || isBlockArg(input) || isUnblockArg(input);
+        return isMoveArg(input) || isBlockArg(input) || isUnblockArg(input) || isCancelArg(input);
     }
 
     static boolean isListColumnsShort(String input) {
