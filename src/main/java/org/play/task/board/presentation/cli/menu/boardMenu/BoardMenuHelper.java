@@ -22,6 +22,10 @@ class BoardMenuHelper {
         return input != null &&  input.matches("\\s*u(nblock)?\\s*$");
     }
 
+    static boolean isCancel(String input) {
+        return input != null &&  input.matches("\\s*c(ancel)?\\s*$");
+    }
+
     static boolean isMoveArg(String input) {
         return input != null && input.matches("^\\s*m(ove)? \\S.*$");
     }
@@ -32,6 +36,10 @@ class BoardMenuHelper {
 
     static boolean isUnblockArg(String input) {
         return input != null &&  input.matches("\\s*u(nblock)? \\S.*");
+    }
+
+    static boolean isCancelArg(String input) {
+        return input != null &&  input.matches("\\s*c(ancel)? \\S.*");
     }
 
     static boolean isCardArgsCommand(String input) {

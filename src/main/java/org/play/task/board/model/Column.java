@@ -50,6 +50,12 @@ public class Column  {
                 .findFirst().orElseThrow();
     }
 
+    public static Column findCanceled(List<Column> columns) {
+        return columns.stream()
+                .filter(col -> col.type() == Type.CANCELED)
+                .findFirst().orElseThrow();
+    }
+
     public enum Type {
         INITIAL,
         PENDING,
