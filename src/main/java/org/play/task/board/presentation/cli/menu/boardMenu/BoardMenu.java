@@ -210,13 +210,16 @@ public class BoardMenu extends Menu<Board> {
 
     private void deleteColumn(BoardViewModel viewModel, Board board) {
         io.printf("Delete Column:\n");
-        List<Column> columns = viewModel.boardColumns(board);
-        if (columns.isEmpty()) {
+        List<Column> pendingColumns = viewModel.boardColumns(board)
+                .stream()
+                .filter(c -> c.type() == Column.Type.PENDING)
+                .toList();
+        if (pendingColumns.isEmpty()) {
             io.printf("No columns to delete\n");
             return;
         }
 
-        for (Column column : columns) {
+        for (Column column : pendingColumns) {
             io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
         }
 
@@ -224,7 +227,7 @@ public class BoardMenu extends Menu<Board> {
         if (input.isEmpty())
             return;
 
-        Optional<Column> maybeColumn = Column.findColumnByNameOrId(columns, input);
+        Optional<Column> maybeColumn = Column.findColumnByNameOrId(pendingColumns, input);
         if (maybeColumn.isPresent()) {
             Column column = maybeColumn.get();
             Either<Column, String> eitherColumnOrError = viewModel.deleteColumn(board, column);
