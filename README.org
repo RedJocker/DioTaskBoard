@@ -67,7 +67,7 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
     - [X] excluir coluna,
     - [X] bloquear card,
     - [x] desbloquear card
-    - cancelar um card,
+    - [ ] cancelar um card,
     - [X] fechar board;
 
 **** Requisitos opcionais
