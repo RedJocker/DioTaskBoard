@@ -12,23 +12,23 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class BoardApplication implements CommandLineRunner {
 
 
-	private final MainMenu mainMenu;
-	private final BoardViewModel boardViewModel;
+    private final MainMenu mainMenu;
+    private final BoardViewModel boardViewModel;
 
-	public BoardApplication(MainMenu mainMenu, BoardViewModel boardViewModel) {
-		this.mainMenu = mainMenu;
+    public BoardApplication(MainMenu mainMenu, BoardViewModel boardViewModel) {
+	this.mainMenu = mainMenu;
         this.boardViewModel = boardViewModel;
     }
 
-	public static void main(String[] args) {
-		new SpringApplicationBuilder(BoardApplication.class)
-				.headless(true)
-				.web(WebApplicationType.NONE)
-				.run(args);
-	}
+    public static void main(String[] args) {
+	new SpringApplicationBuilder(BoardApplication.class)
+	    .headless(true)
+	    .web(WebApplicationType.NONE)
+	    .run(args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		mainMenu.loop(boardViewModel, null);
-	}
+    @Override
+    public void run(String... args) throws Exception {
+	mainMenu.loop(boardViewModel, null);
+    }
 }

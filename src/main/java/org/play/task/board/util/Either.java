@@ -9,9 +9,9 @@ public class Either<Good, Bad> {
         this.error = error;
     }
 
-   public static <Good, Bad> Either<Good, Bad> good(Good ok) {
+    public static <Good, Bad> Either<Good, Bad> good(Good ok) {
         return new Either<>(ok, null);
-   }
+    }
 
     public static <Good, Bad> Either<Good, Bad> bad(Bad error) {
         return new Either<>(null, error);

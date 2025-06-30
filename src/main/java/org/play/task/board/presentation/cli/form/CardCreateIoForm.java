@@ -37,7 +37,8 @@ public class CardCreateIoForm extends IoForm<Optional<Card>, Void> {
             final String description = io.readLine().trim();
 
             if (!Card.validDescription(description)) {
-                io.printf("\tInvalid card description: '%s'\n", description);
+                io.printf("\tInvalid card description: '%s'\n",
+		    description);
                 if (tryAgain()) {
                     continue ;
                 }
@@ -50,7 +51,7 @@ public class CardCreateIoForm extends IoForm<Optional<Card>, Void> {
                     OffsetDateTime.now(),
                     false,
                     null
-            ));
+                ));
         }
         return Optional.empty();
     }

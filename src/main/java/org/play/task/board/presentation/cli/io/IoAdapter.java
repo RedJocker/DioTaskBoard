@@ -47,5 +47,3 @@ public interface IoAdapter {
         return maybeNumber;
     }
 }
-
-

@@ -16,44 +16,46 @@ public class Column  {
         if (cardName == null || cardName.isBlank())
             return false;
         final String nameNorm = cardName.trim().toLowerCase();
-        return !nameNorm.equals("initial") && !nameNorm.equals("final") && !nameNorm.equals("canceled");
+        return !nameNorm.equals("initial")
+            && !nameNorm.equals("final")
+            && !nameNorm.equals("canceled");
     }
 
     public static Column withId(Long id, Column column) {
         return new Column(
-                id,
-                column.type,
-                column.name,
-                column.order,
-                column.boardId
+	    id,
+	    column.type,
+	    column.name,
+	    column.order,
+	    column.boardId
         );
     }
 
     public static Column next(List<Column> boardColumns, Column column) {
         Optional<Column> next = boardColumns.stream()
-                .dropWhile(col -> col.order() <= column.order())
-                .findFirst();
+	    .dropWhile(col -> col.order() <= column.order())
+	    .findFirst();
         return next.orElse(column);
     }
 
     public static Column previous(List<Column> boardColumns, Column column) {
         List<Column> previousList = boardColumns.stream()
-                .takeWhile(col -> col.order() < column.order())
-                .toList();
+	    .takeWhile(col -> col.order() < column.order())
+	    .toList();
 
         return previousList.isEmpty() ? column : previousList.getLast();
     }
 
     public static Column findColumnById(List<Column> boardColumns, Long id) {
         return boardColumns.stream()
-                .filter(col -> col.columnId().equals(id))
-                .findFirst().orElseThrow();
+	    .filter(col -> col.columnId().equals(id))
+	    .findFirst().orElseThrow();
     }
 
     public static Column findCanceled(List<Column> columns) {
         return columns.stream()
-                .filter(col -> col.type() == Type.CANCELED)
-                .findFirst().orElseThrow();
+	    .filter(col -> col.type() == Type.CANCELED)
+	    .findFirst().orElseThrow();
     }
 
     public enum Type {
@@ -71,7 +73,13 @@ public class Column  {
 
     final private long boardId;
 
-    public Column(Long columnId, Type type, String name, int order, long boardId) {
+    public Column(
+        Long columnId,
+        Type type,
+        String name,
+        int order,
+        long boardId
+    ) {
         this.columnId = columnId;
         this.type = type;
         this.name = name;
@@ -79,46 +87,64 @@ public class Column  {
         this.boardId = boardId;
     }
 
-    public static Optional<Column> findColumnByNameOrId(List<Column> columns, String nameOrId) {
+    public static Optional<Column> findColumnByNameOrId(
+        List<Column> columns,
+        String nameOrId
+    ) {
         return columns.stream()
-                .filter(col -> col.name().equalsIgnoreCase(nameOrId)
-                        || col.columnId().toString().equals(nameOrId))
-                .findFirst();
+	    .filter(col -> col.name().equalsIgnoreCase(nameOrId)
+		|| col.columnId().toString().equals(nameOrId))
+	    .findFirst();
     }
 
     public static Column initial(long boardId) {
-        return new Column(null, Type.INITIAL, "initial", INITIAL_ORDER, boardId);
+        return new Column(
+            null, Type.INITIAL, "initial", INITIAL_ORDER, boardId
+        );
     }
 
     public static Column finall(long boardId) {
-        return new Column(null, Type.FINAL, "final", FINAL_ORDER, boardId);
+        return new Column(
+            null, Type.FINAL, "final", FINAL_ORDER, boardId
+        );
     }
 
     public static Column canceled(long boardId) {
-        return new Column(null, Type.CANCELED, "canceled", CANCELED_ORDER, boardId);
+        return new Column(
+            null, Type.CANCELED, "canceled", CANCELED_ORDER, boardId
+        );
     }
 
-    public static Either<Column, String> pending(String name, int order, long boardId) {
+    public static Either<Column, String> pending(
+        String name, int order, long boardId
+    ) {
         final String nameNorm = name.trim().toLowerCase();
-        if (nameNorm.equals("initial") || nameNorm.equals("final") || nameNorm.equals("canceled"))
-            return Either.bad("pending column cannot have reserved column name " + nameNorm);
+        if (nameNorm.equals("initial")
+            || nameNorm.equals("final")
+            || nameNorm.equals("canceled"))
+            return Either.bad("pending column cannot have reserved column name "
+                + nameNorm);
         if (order < 0)
-            return Either.bad("invalid column order " + order + " must be greater than 0");
+            return Either.bad("invalid column order "
+                + order + " must be greater than 0");
         if (order == 0 || order >= Integer.MAX_VALUE - 1) {
-            return Either.bad("invalid column order" + order + " is reserved value");
+            return Either.bad("invalid column order"
+                + order + " is reserved value");
         }
-        return Either.good(new Column(null, Type.PENDING, nameNorm, order, boardId));
+        return Either.good(new Column(
+                null, Type.PENDING, nameNorm, order, boardId
+            ));
     }
 
     @Override
     public String toString() {
         return "Column{" +
-                "columnId=" + columnId +
-                ", type=" + type +
-                ", name='" + name + '\'' +
-                ", order=" + order +
-                ", id=" + boardId +
-                '}';
+	    "columnId=" + columnId +
+	    ", type=" + type +
+	    ", name='" + name + '\'' +
+	    ", order=" + order +
+	    ", id=" + boardId +
+	    '}';
     }
 
     public Long columnId() {

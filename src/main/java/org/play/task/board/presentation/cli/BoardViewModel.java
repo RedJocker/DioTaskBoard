@@ -1,6 +1,5 @@
 package org.play.task.board.presentation.cli;
 
-
 import org.play.task.board.model.Board;
 import org.play.task.board.model.Card;
 import org.play.task.board.model.Column;
@@ -25,7 +24,11 @@ public class BoardViewModel {
     private List<Column> boardColumnsCache = null;
     private List<Card> cardsAllCache = null;
 
-    BoardViewModel(CardRepository cardRepository, ColumnRepository columnRepository, BoardRepository boardRepository) {
+    BoardViewModel(
+        CardRepository cardRepository,
+        ColumnRepository columnRepository,
+        BoardRepository boardRepository
+    ) {
         this.cardRepository = cardRepository;
         this.columnRepository = columnRepository;
         this.boardRepository = boardRepository;
@@ -37,7 +40,8 @@ public class BoardViewModel {
     }
 
     public Optional<Card> onCreateCard(Card newCard, Column initialColumn) {
-        Optional<Card> maybeNewCard = cardRepository.save(newCard, initialColumn.columnId());
+        Optional<Card> maybeNewCard =
+            cardRepository.save(newCard, initialColumn.columnId());
         if (maybeNewCard.isPresent()) {
             cardsAllCache = null;
         }
@@ -58,7 +62,8 @@ public class BoardViewModel {
 
 
     public Optional<Column> onCreateColumn(Column column) {
-        Optional<Column> maybeNewColumn = columnRepository.createPending(column);
+        Optional<Column> maybeNewColumn =
+	    columnRepository.createPending(column);
         if (maybeNewColumn.isPresent()) {
             boardColumnsCache = null; // reset cached columns
         }
@@ -82,7 +87,8 @@ public class BoardViewModel {
 
     public List<Card> cardsAll(Board board) {
         if (cardsAllCache == null) {
-            cardsAllCache = cardRepository.getCardsFromColumns(boardColumns(board));
+            cardsAllCache =
+                cardRepository.getCardsFromColumns(boardColumns(board));
         }
         return cardsAllCache;
     }
@@ -93,7 +99,8 @@ public class BoardViewModel {
     }
 
     public boolean blockCard(Board board, Card card) {
-        boolean wasBlocked = cardRepository.setIsBlockCard(board, card, true);
+        boolean wasBlocked = cardRepository
+            .setIsBlockCard(board, card, true);
         if (wasBlocked) {
             cardsAllCache = null; // reset cached cards
         }
@@ -101,7 +108,8 @@ public class BoardViewModel {
     }
 
     public boolean unblockCard(Board board, Card card) {
-        boolean wasUnblocked = cardRepository.setIsBlockCard(board, card, false);
+        boolean wasUnblocked = cardRepository
+            .setIsBlockCard(board, card, false);
         if (wasUnblocked) {
             cardsAllCache = null; // reset cached cards
         }
@@ -112,8 +120,10 @@ public class BoardViewModel {
         if (column.type() != Column.Type.PENDING) {
             return Either.bad("Can only delete pending type columns");
         }
-        if (cardsAll(board).stream().anyMatch(card -> card.columnId().equals(column.columnId()))) {
-            return Either.bad("Cannot delete column " + column.name() + " with cards in it");
+        if (cardsAll(board).stream()
+            .anyMatch(card -> card.columnId().equals(column.columnId()))) {
+            return Either.bad("Cannot delete column "
+                + column.name() + " with cards in it");
         }
         boolean wasDeleted = columnRepository.deleteColumn(board, column);
         if (wasDeleted) {
@@ -123,6 +133,4 @@ public class BoardViewModel {
             return Either.bad("Failed to delete column");
         }
     }
-
-
 }

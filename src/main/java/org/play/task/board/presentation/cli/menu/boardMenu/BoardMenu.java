@@ -58,14 +58,15 @@ public class BoardMenu extends Menu<Board> {
         static String choices() {
             StringBuilder builder = new StringBuilder();
             for (Choice choice : Choice.values()) {
-                builder.append(String.format(LIST_ITEM_MS1, choice.menuId, choice.menuStr));
+                builder.append(String.format(
+			LIST_ITEM_MS1, choice.menuId, choice.menuStr));
             }
             return builder.toString();
         }
     }
 
     private static final String startMenu =
-            "Board Menu:\n" + choices();
+        "Board Menu:\n" + choices();
 
     private final CardCreateIoForm cardCreateIoForm;
 
@@ -74,8 +75,8 @@ public class BoardMenu extends Menu<Board> {
 
 
     BoardMenu(IoAdapter ioAdapter,
-              CardCreateIoForm cardCreateIoForm,
-              ColumnCreateIoForm columnCreateIoForm) {
+        CardCreateIoForm cardCreateIoForm,
+        ColumnCreateIoForm columnCreateIoForm) {
 
         super(ioAdapter);
         this.cardCreateIoForm = cardCreateIoForm;
@@ -99,13 +100,13 @@ public class BoardMenu extends Menu<Board> {
         while (choice != 0) {
             choice = this.promptMenuChoice();
             switch (Choice.values()[choice]) {
-                case EXIT -> { return; }
-                case CREATE_CARD -> createCard(viewModel, board);
-                case CREATE_COLUMN -> createColumn(viewModel, board);
-                case SHOW_BOARD -> showBoard(viewModel, board);
-                case SHOW_BOARD_FULL -> showBoardFull(viewModel, board);
-                case DELETE_COLUMN -> deleteColumn(viewModel, board);
-                default -> {}
+            case EXIT -> { return; }
+            case CREATE_CARD -> createCard(viewModel, board);
+            case CREATE_COLUMN -> createColumn(viewModel, board);
+            case SHOW_BOARD -> showBoard(viewModel, board);
+            case SHOW_BOARD_FULL -> showBoardFull(viewModel, board);
+            case DELETE_COLUMN -> deleteColumn(viewModel, board);
+            default -> {}
             }
         }
     }
@@ -119,7 +120,8 @@ public class BoardMenu extends Menu<Board> {
 
         // always creates card on initial column
         Column initialColumn = viewModel.boardColumns(board).getFirst();
-        maybeNewCard = viewModel.onCreateCard(maybeNewCard.get(), initialColumn);
+        maybeNewCard = viewModel
+            .onCreateCard(maybeNewCard.get(), initialColumn);
         if (maybeNewCard.isPresent()) {
             io.printf("Card created: %s\n", maybeNewCard.get().toString());
         } else {
@@ -129,7 +131,8 @@ public class BoardMenu extends Menu<Board> {
 
     private void createColumn(BoardViewModel viewModel, Board board) {
 
-        Optional<Column> maybeNewColumn = columnCreateIoForm.collect(new Pair<>(board, viewModel.boardColumns(board)));
+        Optional<Column> maybeNewColumn = columnCreateIoForm
+            .collect(new Pair<>(board, viewModel.boardColumns(board)));
         if (maybeNewColumn.isEmpty()) {
             io.printf("Column creation cancelled\n");
             return;
@@ -155,7 +158,8 @@ public class BoardMenu extends Menu<Board> {
         }
 
         Optional<Column> columnByNameOrId =
-                Column.findColumnByNameOrId(viewModel.boardColumns(board), input.trim());
+            Column.findColumnByNameOrId(
+                viewModel.boardColumns(board), input.trim());
         if (columnByNameOrId.isPresent()) {
             showColumnDetails(viewModel, columnByNameOrId.get(), board);
         } else {
@@ -173,17 +177,21 @@ public class BoardMenu extends Menu<Board> {
                 return ;
             else if (isCardArgsCommand(input)) {
                 String[] parts = input.split(" ");
-                Optional<Card> maybeCard = Card.findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
+                Optional<Card> maybeCard = Card
+                    .findCardByNameOrId(viewModel.cardsAll(board), parts[1]);
                 if (maybeCard.isPresent()) {
                     Card card = maybeCard.get();
-                    Column cardColumn = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
-                    if (consumeCardArgCommand(io, input, viewModel, board, cardColumn)) {
+                    Column cardColumn = Column.findColumnById(
+                        viewModel.boardColumns(board), card.columnId());
+                    if (consumeCardArgCommand(
+                            io, input, viewModel, board, cardColumn)) {
                         continue;
                     }
                 }
             } else if(isIndent(input)) {
                 Optional<Card> maybeCard =
-                        Card.findCardByNameOrId(viewModel.cardsAll(board), input.trim());
+                    Card.findCardByNameOrId(
+                        viewModel.cardsAll(board), input.trim());
                 if (maybeCard.isPresent()) {
                     Card card = maybeCard.get();
                     showCardDetails(io, viewModel, card, board);
@@ -198,7 +206,8 @@ public class BoardMenu extends Menu<Board> {
             }
 
             Optional<Column> columnByNameOrId =
-                    Column.findColumnByNameOrId(viewModel.boardColumns(board), input.trim());
+                Column.findColumnByNameOrId(
+                    viewModel.boardColumns(board), input.trim());
             if (columnByNameOrId.isPresent()) {
                 showColumnDetails(viewModel, columnByNameOrId.get(), board);
             } else {
@@ -211,9 +220,9 @@ public class BoardMenu extends Menu<Board> {
     private void deleteColumn(BoardViewModel viewModel, Board board) {
         io.printf("Delete Column:\n");
         List<Column> pendingColumns = viewModel.boardColumns(board)
-                .stream()
-                .filter(c -> c.type() == Column.Type.PENDING)
-                .toList();
+            .stream()
+            .filter(c -> c.type() == Column.Type.PENDING)
+            .toList();
         if (pendingColumns.isEmpty()) {
             io.printf("No columns to delete\n");
             return;
@@ -227,12 +236,15 @@ public class BoardMenu extends Menu<Board> {
         if (input.isEmpty())
             return;
 
-        Optional<Column> maybeColumn = Column.findColumnByNameOrId(pendingColumns, input);
+        Optional<Column> maybeColumn = Column
+            .findColumnByNameOrId(pendingColumns, input);
         if (maybeColumn.isPresent()) {
             Column column = maybeColumn.get();
-            Either<Column, String> eitherColumnOrError = viewModel.deleteColumn(board, column);
+            Either<Column, String> eitherColumnOrError =
+                viewModel.deleteColumn(board, column);
             if (eitherColumnOrError.isGood()) {
-                io.printf("Column %s deleted successfully\n", eitherColumnOrError.ok().name());
+                io.printf("Column %s deleted successfully\n",
+                    eitherColumnOrError.ok().name());
             } else {
                 io.printf(eitherColumnOrError.error() + "\n");
             }
@@ -241,7 +253,9 @@ public class BoardMenu extends Menu<Board> {
         }
     }
 
-    private void showColumnDetails(BoardViewModel viewModel, Column column, Board board) {
+    private void showColumnDetails(
+        BoardViewModel viewModel, Column column, Board board) {
+
         while (true) {
             displayColumnDetails(io, viewModel, column, board);
 
@@ -249,11 +263,13 @@ public class BoardMenu extends Menu<Board> {
             if (input.isEmpty())
                 return;
             else if (isNext(input)) {
-                final Column next = Column.next(viewModel.boardColumns(board), column);
+                final Column next = Column
+                    .next(viewModel.boardColumns(board), column);
                 showColumnDetails(viewModel, next, board);
                 return;
             } else if (isPrevious(input)) {
-                final Column previous = Column.previous(viewModel.boardColumns(board), column);
+                final Column previous = Column
+                    .previous(viewModel.boardColumns(board), column);
                 showColumnDetails(viewModel, previous, board);
                 return;
             } else if (isListColumnsShort(input)) {
@@ -262,13 +278,14 @@ public class BoardMenu extends Menu<Board> {
             } else if (isListColumnsFull(input)) {
                 showBoardFull(viewModel, board);
                 return;
-            } else if(consumeCardArgCommand(io, input, viewModel, board, column)) {
+            } else if(consumeCardArgCommand(
+                    io, input, viewModel, board, column)) {
                 continue;
             }
 
             Optional<Card> maybeCard =
-                    Card.findCardByNameOrId(viewModel.cardsAll(board), input.trim());
-
+                Card.findCardByNameOrId(
+                    viewModel.cardsAll(board), input.trim());
             if (maybeCard.isPresent()) {
                 Card card = maybeCard.get();
                 showCardDetails(io, viewModel, card, board);

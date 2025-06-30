@@ -47,7 +47,8 @@ class BoardMenuHelper {
     }
 
     static boolean isCardArgsCommand(String input) {
-        return isMoveArg(input) || isBlockArg(input) || isUnblockArg(input) || isCancelArg(input);
+        return isMoveArg(input)
+            || isBlockArg(input) || isUnblockArg(input) || isCancelArg(input);
     }
 
     static boolean isListColumnsShort(String input) {
@@ -70,17 +71,21 @@ class BoardMenuHelper {
         return input.matches("^\\s*p(rev(ious)?)?\\s*$");
     }
 
-    static void displayListColumnsShort(IoAdapter io, BoardViewModel viewModel, Board board) {
+    static void displayListColumnsShort(
+        IoAdapter io, BoardViewModel viewModel, Board board) {
         io.printf(BOARD_DETAILS_TITLE, board.name());
         viewModel.boardColumns(board).forEach(column -> {
-            io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
-        });
+		io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
+	    });
         io.printf("\n");
     }
 
-    static void displayCardDetail(IoAdapter io, BoardViewModel viewModel, Card card, Board board) {
+    static void displayCardDetail(
+        IoAdapter io, BoardViewModel viewModel, Card card, Board board
+    ) {
         io.printf("Card Details:\n");
-        Column cardColumn = Column.findColumnById(viewModel.boardColumns(board), card.columnId());
+        Column cardColumn = Column
+            .findColumnById(viewModel.boardColumns(board), card.columnId());
         io.printf("\tColumn Name: %s\n", cardColumn.name());
         io.printf("\tID: %d\n", card.cardId());
         io.printf("\tName: %s\n", card.name());
@@ -89,13 +94,15 @@ class BoardMenuHelper {
         io.printf("\tBlocked: %s\n", card.isBlocked() ? "Yes" : "No");
     }
 
-    static void displayListColumnsFull(IoAdapter io, BoardViewModel viewModel, Board board) {
+    static void displayListColumnsFull(
+        IoAdapter io, BoardViewModel viewModel, Board board
+    ) {
         io.printf(BOARD_DETAILS_TITLE, board.name());
         for (Column column : viewModel.boardColumns(board)) {
             io.printf(LIST_ITEM_MS1, column.columnId(), column.name());
             List<Card> cardsInColumn = viewModel.cardsAll(board).stream()
-                    .filter(card -> card.columnId().equals(column.columnId()))
-                    .toList();
+		.filter(card -> card.columnId().equals(column.columnId()))
+		.toList();
             if (cardsInColumn.isEmpty()) {
                 io.printf("\t\tNo cards in this column\n");
             } else {
@@ -106,11 +113,13 @@ class BoardMenuHelper {
         }
     }
 
-    static void displayColumnDetails(IoAdapter io, BoardViewModel viewModel, Column column, Board board) {
+    static void displayColumnDetails(
+        IoAdapter io, BoardViewModel viewModel, Column column, Board board
+    ) {
         io.printf(COLUMN_DETAILS_TITLE, column.name());
         List<Card> cardsInColumn = viewModel.cardsAll(board).stream()
-                .filter(card -> card.columnId().equals(column.columnId()))
-                .toList();
+	    .filter(card -> card.columnId().equals(column.columnId()))
+	    .toList();
         if (cardsInColumn.isEmpty()) {
             io.printf("\tNo cards in this column\n");
         } else {

@@ -1,6 +1,5 @@
 package org.play.task.board.presentation.cli.form;
 
-
 import org.play.task.board.model.Board;
 import org.play.task.board.model.Column;
 import org.play.task.board.presentation.cli.io.IoAdapter;
@@ -14,8 +13,9 @@ import java.util.Optional;
 
 @Component
 @Scope("singleton")
-public class ColumnCreateIoForm extends IoForm<Optional<Column>, Pair<Board, List<Column>>> {
-
+public class ColumnCreateIoForm
+    extends IoForm<Optional<Column>, Pair<Board, List<Column>>>
+{
     protected ColumnCreateIoForm(IoAdapter ioAdapter) {
         super(ioAdapter);
     }
@@ -41,14 +41,18 @@ public class ColumnCreateIoForm extends IoForm<Optional<Column>, Pair<Board, Lis
 
             io.printf("\tAfter Which Column?:\n");
             columns.stream()
-                    .takeWhile(col -> col.type() != Column.Type.FINAL && col.type() != Column.Type.CANCELED)
-                    .forEach(col -> io.printf("\t\t\t- (%d) %s\n", col.columnId(), col.name()));
+                    .takeWhile(col -> col.type() != Column.Type.FINAL
+                        && col.type() != Column.Type.CANCELED)
+                    .forEach(col -> io
+                        .printf("\t\t\t- (%d) %s\n",
+                            col.columnId(), col.name()));
             final String columnBeforeEitherNameOrId = io.readLine().trim();
             final Optional<Column> maybeColumnBefore = Column
                     .findColumnByNameOrId(columns, columnBeforeEitherNameOrId);
 
             if (maybeColumnBefore.isEmpty()) {
-                io.printf("\tWas not found column with name or id: '%s'\n", columnBeforeEitherNameOrId);
+                io.printf("\tWas not found column with name or id: '%s'\n",
+                    columnBeforeEitherNameOrId);
                 if (tryAgain()) {
                     continue ;
                 }

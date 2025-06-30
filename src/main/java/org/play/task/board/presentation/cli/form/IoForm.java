@@ -2,7 +2,6 @@ package org.play.task.board.presentation.cli.form;
 
 import org.play.task.board.presentation.cli.io.IoAdapter;
 
-
 public abstract class IoForm<R, A> implements Form<R, A>{
     protected final IoAdapter io;
 

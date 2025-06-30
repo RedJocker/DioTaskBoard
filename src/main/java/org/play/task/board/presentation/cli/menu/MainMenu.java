@@ -19,7 +19,6 @@ import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.EXIT;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.SELECT_BOARD;
 import static org.play.task.board.presentation.cli.menu.MainMenu.Choice.choices;
 
-
 @Component
 public class MainMenu extends Menu<Void> {
 
@@ -41,14 +40,16 @@ public class MainMenu extends Menu<Void> {
         static String choices() {
             StringBuilder builder = new StringBuilder();
             for (Choice choice : Choice.values()) {
-                builder.append(String.format(LIST_ITEM_MS1, choice.menuId, choice.menuStr));
+                builder.append(String.format(
+                        LIST_ITEM_MS1, choice.menuId, choice.menuStr));
             }
             return builder.toString();
         }
     }
-    private static final String welcome = "\n\n\tT  A  S  K -> B  O  A  R  D\n\n";
+    private static final String welcome =
+        "\n\n\tT  A  S  K -> B  O  A  R  D\n\n";
     private static final String startMenu =
-            "Main Menu:\n" + choices();
+	"Main Menu:\n" + choices();
     private static final String bye = "\n\n\tBye\n\n";
 
     private final BoardMenu boardMenu;
@@ -57,7 +58,12 @@ public class MainMenu extends Menu<Void> {
 
     private final CreateBoardIoForm createBoardIoForm;
 
-    MainMenu(IoAdapter ioAdapter, BoardMenu boardMenu, SelectBoardIoForm selectBoardIoform, CreateBoardIoForm createBoardIoForm) {
+    MainMenu(
+        IoAdapter ioAdapter,
+        BoardMenu boardMenu,
+        SelectBoardIoForm selectBoardIoform,
+        CreateBoardIoForm createBoardIoForm
+    ) {
         super(ioAdapter);
         this.boardMenu = boardMenu;
         this.selectBoardIoform = selectBoardIoform;
@@ -93,29 +99,28 @@ public class MainMenu extends Menu<Void> {
                 break;
             } else if (choice == EXCLUDE_BOARD.menuId) {
                 final List<Board> boards = viewModel.getBoards();
-                final Optional<Board> maybeBoard = selectBoardIoform.collect(boards);
-
+                final Optional<Board> maybeBoard =
+                    selectBoardIoform.collect(boards);
                 if (maybeBoard.isPresent()) {
                     if (viewModel.excludeBoard(maybeBoard.get())) {
                         io.printf("Board excluded successfully");
                     } else {
-                        io.printf("Failed to exclude board " + maybeBoard.get().name());
+                        io.printf("Failed to exclude board "
+                            + maybeBoard.get().name());
                     }
                 } else {
                     io.printf("Board not found");
                 }
-
             } else if (choice == SELECT_BOARD.menuId) {
                 final List<Board> boards =  viewModel.getBoards();
-                final Optional<Board> maybeBoard = selectBoardIoform.collect(boards);
-
+                final Optional<Board> maybeBoard =
+                    selectBoardIoform.collect(boards);
                 if (maybeBoard.isPresent()) {
                     viewModel.clearCaches();
                     boardMenu.loop(viewModel, maybeBoard.get());
                 } else {
                     io.printf("\nBoard not found");
                 }
-
             } else if (choice == CREATE_BOARD.menuId) {
                 Optional<Board> maybeBoard = createBoardIoForm.collect(null);
                 if (maybeBoard.isPresent()) {
@@ -124,15 +129,14 @@ public class MainMenu extends Menu<Void> {
                     io.printf("\nBoard creation cancelled or failed");
                 }
                 if (maybeBoard.isPresent()) {
-                    io.printf("\nBoard created successfully: %s\n", maybeBoard.get().name());
+                    io.printf("\nBoard created successfully: %s\n",
+                        maybeBoard.get().name());
                 } else {
                     io.printf("\nFailed to create board");
                 }
-
             } else if (choice == DEBUG.menuId) {
                 viewModel.onDebug();
             }
-
         }
         this.displayBye();
         System.exit(0);

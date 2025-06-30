@@ -15,11 +15,11 @@ public class H2ServerConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server h2TcpServer() throws SQLException {
         return Server.createTcpServer(
-                "-tcp",
-                "-tcpAllowOthers",
-                "-tcpPort", "9092",
-                "-ifExists",
-                "-baseDir", "./"
+	    "-tcp",
+	    "-tcpAllowOthers",
+	    "-tcpPort", "9092",
+	    "-ifExists",
+	    "-baseDir", "./"
         );
     }
 
@@ -27,9 +27,9 @@ public class H2ServerConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public Server h2WebServer() throws SQLException {
         return Server.createWebServer(
-                "-web",
-                "-webAllowOthers",
-                "-webPort", "8082"
+	    "-web",
+	    "-webAllowOthers",
+	    "-webPort", "8082"
         );
     }
 }

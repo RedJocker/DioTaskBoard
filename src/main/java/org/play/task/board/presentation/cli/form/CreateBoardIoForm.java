@@ -15,7 +15,6 @@ public class CreateBoardIoForm extends IoForm<Optional<Board>, Void> {
         super(ioAdapter);
     }
 
-
     @Override
     public Optional<Board> collect(Void ignore) {
         while (true) {
@@ -33,7 +32,7 @@ public class CreateBoardIoForm extends IoForm<Optional<Board>, Void> {
             return Optional.of(new Board(
                     null,
                     boardName
-            ));
+                ));
         }
 
         return Optional.empty();
