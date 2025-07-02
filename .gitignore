@@ -37,5 +37,14 @@ out/
 .vscode/
 
 # h2 board.db database file
-board.db.mv.db
-board.db.trace.db
+*.mv.db
+*.trace.db
+
+#Emacs
+TAGS
+.eglot-java/
+*~
+.#*
+target/
+.classpath
+.project
