@@ -4,7 +4,7 @@
 
 ** Projeto de board para gerenciamento de tarefas (Exercicio)
 
-*** Requisitos propostos
+*** Requisitos propostose 
 
 Escreva um código que irá criar um board customizável para acompanhamento de tarefas
 
@@ -80,3 +80,636 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
    - com o os bloqueios dos cards,
    - com o tempo que ficaram bloqueados
    - com a justificativa dos bloqueios e desbloqueios.
+
+*** Exemplo do resultado
+Este a seguir e um exemplo de utilizacao da aplicao.
+A aplicacao tem um H2 como banco de dados e realiza
+operacao de leitura e escrita neste banco de dados
+mantendo e atualizando o estado do task board
+
+#+begin_src
+-*- mode: compilation; default-directory: "~/IdeaProjects/board/" -*-
+Comint started at Wed Jul  2 01:30:50
+
+./gradlew bootRun
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+
+> Task :bootRun
+
+
+    ▄▄▄▄▄▄ ▄▄▄· .▄▄ · ▄ •▄         ▄▄▄▄·        ▄▄▄· ▄▄▄  ·▄▄▄▄
+    ▀•██ ▀▐█ ▀█ ▐█ ▀. █▌▄▌▪        ▐█ ▀█▪ ▄█▀▄ ▐█ ▀█ ▀▄ █·██· ██
+      ▐█.▪▄█▀▀█ ▄▀▀▀█▄▐▀▀▄·        ▐█▀▀█▄▐█▌.▐▌▄█▀▀█ ▐▀▀▄ ▐█▪ ▐█▌
+      ▐█▌·▐█▪ ▐▌▐█▄▪▐█▐█.█▌        ██▄▪▐█▐█▌.▐▌▐█▪ ▐▌▐█•█▌██. ██
+      ▀▀▀  ▀  ▀  ▀▀▀▀ ·▀  ▀        ·▀▀▀▀  ▀█▄▀▪ ▀  ▀ .▀  ▀▀▀▀▀▀•
+
+
+
+	T  A  S  K -> B  O  A  R  D
+
+Main Menu:
+	- (0) Exit
+	- (1) Select Board
+	- (2) Create Board
+	- (3) Exclude Board
+	- (4) Debug
+> 1
+
+Choose a board:
+	- (5) taskboard app
+	- (6) another board
+	- (8) hey there column
+	- (9) delivery
+	- (10) bill track
+> 10
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+> 4
+Board (bill track):
+	- (35) initial
+		- (17) eletric bill 2026-12
+		- (18) water bill 2026-12
+	- (36) final
+		No cards in this column
+	- (37) canceled
+		No cards in this column
+>		17
+Card Details:
+	Column Name: initial
+	ID: 17
+	Name: eletric bill 2026-12
+	Description: $500
+	Created At: 2025-06-30T00:36:32.760037-03:00
+	Blocked: Yes
+> unblock
+Card eletric bill 2026-12 unblocked successfully
+Card Details:
+	Column Name: initial
+	ID: 17
+	Name: eletric bill 2026-12
+	Description: $500
+	Created At: 2025-06-30T00:36:32.760037-03:00
+	Blocked: No
+>
+Board (bill track):
+	- (35) initial
+		- (17) eletric bill 2026-12
+		- (18) water bill 2026-12
+	- (36) final
+		No cards in this column
+	- (37) canceled
+		No cards in this column
+> block 17
+Card eletric bill 2026-12 blocked successfully
+Card Details:
+	Column Name: initial
+	ID: 17
+	Name: eletric bill 2026-12
+	Description: $500
+	Created At: 2025-06-30T00:36:32.760037-03:00
+	Blocked: Yes
+> move
+Card eletric bill 2026-12 is blocked and cannot be moved
+Card Details:
+	Column Name: initial
+	ID: 17
+	Name: eletric bill 2026-12
+	Description: $500
+	Created At: 2025-06-30T00:36:32.760037-03:00
+	Blocked: Yes
+>
+Board (bill track):
+	- (35) initial
+		- (17) eletric bill 2026-12
+		- (18) water bill 2026-12
+	- (36) final
+		No cards in this column
+	- (37) canceled
+		No cards in this column
+> move 17
+Card eletric bill 2026-12 is blocked and cannot be moved
+Board (bill track):
+	- (35) initial
+		- (17) eletric bill 2026-12
+		- (18) water bill 2026-12
+	- (36) final
+		No cards in this column
+	- (37) canceled
+		No cards in this column
+>
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>0
+
+
+	T  A  S  K -> B  O  A  R  D
+
+Main Menu:
+	- (0) Exit
+	- (1) Select Board
+	- (2) Create Board
+	- (3) Exclude Board
+	- (4) Debug
+>1
+
+Choose a board:
+	- (5) taskboard app
+	- (6) another board
+	- (8) hey there column
+	- (9) delivery
+	- (10) bill track
+>9
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>4
+Board (delivery):
+	- (29) initial
+		No cards in this column
+	- (32) preparing
+		- (16) 21
+	- (33) serving
+		No cards in this column
+	- (30) final
+		- (15) 02
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+>move 21
+Card 21 moved to column serving
+Board (delivery):
+	- (29) initial
+		No cards in this column
+	- (32) preparing
+		No cards in this column
+	- (33) serving
+		- (16) 21
+	- (30) final
+		- (15) 02
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+>block 21
+Card 21 blocked successfully
+Card Details:
+	Column Name: serving
+	ID: 16
+	Name: 21
+	Description: double burger and soda
+	Created At: 2025-06-29T03:28:59.608432-03:00
+	Blocked: Yes
+
+Board (delivery):
+	- (29) initial
+		No cards in this column
+	- (32) preparing
+		No cards in this column
+	- (33) serving
+		- (16) 21
+	- (30) final
+		- (15) 02
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+>list
+Board (delivery):
+	- (29) initial
+	- (32) preparing
+	- (33) serving
+	- (30) final
+	- (31) canceled
+
+>29
+Column (initial):
+	No cards in this column
+>next
+Column (preparing):
+	No cards in this column
+>n
+Column (serving):
+	- (16) 21
+> 16
+Card Details:
+	Column Name: serving
+	ID: 16
+	Name: 21
+	Description: double burger and soda
+	Created At: 2025-06-29T03:28:59.608432-03:00
+	Blocked: Yes
+> move
+Card 21 is blocked and cannot be moved
+Card Details:
+	Column Name: serving
+	ID: 16
+	Name: 21
+	Description: double burger and soda
+	Created At: 2025-06-29T03:28:59.608432-03:00
+	Blocked: Yes
+> unblock
+Card 21 unblocked successfully
+Card Details:
+	Column Name: serving
+	ID: 16
+	Name: 21
+	Description: double burger and soda
+	Created At: 2025-06-29T03:28:59.608432-03:00
+	Blocked: No
+> move
+Card 21 moved to column final
+Card Details:
+	Column Name: final
+	ID: 16
+	Name: 21
+	Description: double burger and soda
+	Created At: 2025-06-29T03:28:59.608432-03:00
+	Blocked: No
+> move
+Final and Canceled are permanent columns
+Card Details:
+	Column Name: final
+	ID: 16
+	Name: 21
+	Description: double burger and soda
+	Created At: 2025-06-29T03:28:59.608432-03:00
+	Blocked: No
+
+Column (serving):
+	No cards in this column
+> full
+Board (delivery):
+	- (29) initial
+		No cards in this column
+	- (32) preparing
+		No cards in this column
+	- (33) serving
+		No cards in this column
+	- (30) final
+		- (15) 02
+		- (16) 21
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+> 
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>1
+New Card:
+	Card name:
+	122
+	Card description:
+	fries and soda
+Card created: Card[cardId=19, name=122, description=fries and soda, createdAt=2025-07-02T01:35:12.515408-03:00, isBlocked=false, columnId=29]
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>4
+Board (delivery):
+	- (29) initial
+		- (19) 122
+	- (32) preparing
+		No cards in this column
+	- (33) serving
+		No cards in this column
+	- (30) final
+		- (15) 02
+		- (16) 21
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+>cancel 19
+Card 122 moved to column canceled
+Card Details:
+	Column Name: canceled
+	ID: 19
+	Name: 122
+	Description: fries and soda
+	Created At: 2025-07-02T01:35:12.515408-03:00
+	Blocked: No
+>
+Board (delivery):
+	- (29) initial
+		No cards in this column
+	- (32) preparing
+		No cards in this column
+	- (33) serving
+		No cards in this column
+	- (30) final
+		- (15) 02
+		- (16) 21
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+		- (19) 122
+>move 19
+Final and Canceled are permanent columns
+Board (delivery):
+	- (29) initial
+		No cards in this column
+	- (32) preparing
+		No cards in this column
+	- (33) serving
+		No cards in this column
+	- (30) final
+		- (15) 02
+		- (16) 21
+	- (31) canceled
+		- (13) 01
+		- (14) 11
+		- (19) 122
+>
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>0
+
+
+	T  A  S  K -> B  O  A  R  D
+
+Main Menu:
+	- (0) Exit
+	- (1) Select Board
+	- (2) Create Board
+	- (3) Exclude Board
+	- (4) Debug
+>2
+	Board name:
+>	marketing
+
+Board created successfully: marketing
+
+
+	T  A  S  K -> B  O  A  R  D
+
+Main Menu:
+	- (0) Exit
+	- (1) Select Board
+	- (2) Create Board
+	- (3) Exclude Board
+	- (4) Debug
+>1
+
+Choose a board:
+	- (5) taskboard app
+	- (6) another board
+	- (8) hey there column
+	- (9) delivery
+	- (10) bill track
+	- (11) marketing
+>marketing
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>4
+Board (marketing):
+	- (38) initial
+		No cards in this column
+	- (39) final
+		No cards in this column
+	- (40) canceled
+		No cards in this column
+>
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>2
+New Column:
+	Column name:
+	lead
+	After Which Column?:
+			- (38) initial
+>38
+Column created: lead
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+1
+New Card:
+	Card name:
+	negotiation
+	Card description:
+>	
+	Invalid card description: ''
+Quit (0) TryAgain (Any)
+>0
+Card creation cancelled
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>2
+New Column:
+	Column name:
+	negotiation
+	After Which Column?:
+			- (38) initial
+			- (41) lead
+>41
+Column created: negotiation
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>2
+New Column:
+	Column name:
+	closing
+	After Which Column?:
+			- (38) initial
+			- (41) lead
+			- (42) negotiation
+>42
+Column created: closing
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>4
+Board (marketing):
+	- (38) initial
+		No cards in this column
+	- (41) lead
+		No cards in this column
+	- (42) negotiation
+		No cards in this column
+	- (43) closing
+		No cards in this column
+	- (39) final
+		No cards in this column
+	- (40) canceled
+		No cards in this column
+>
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>1
+New Card:
+	Card name:
+	good supplier
+	Card description:
+	prospect supplier for vital raw material
+Card created: Card[cardId=20, name=good supplier, description=prospect supplier for vital raw material, createdAt=2025-07-02T01:45:11.523744-03:00, isBlocked=false, columnId=38]
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>3
+Board (marketing):
+	- (38) initial
+	- (41) lead
+	- (42) negotiation
+	- (43) closing
+	- (39) final
+	- (40) canceled
+
+>full
+Board (marketing):
+	- (38) initial
+		- (20) good supplier
+	- (41) lead
+		No cards in this column
+	- (42) negotiation
+		No cards in this column
+	- (43) closing
+		No cards in this column
+	- (39) final
+		No cards in this column
+	- (40) canceled
+		No cards in this column
+>move 20
+Card good supplier moved to column lead
+Board (marketing):
+	- (38) initial
+		No cards in this column
+	- (41) lead
+		- (20) good supplier
+	- (42) negotiation
+		No cards in this column
+	- (43) closing
+		No cards in this column
+	- (39) final
+		No cards in this column
+	- (40) canceled
+		No cards in this column
+>block 20
+Card good supplier blocked successfully
+Card Details:
+	Column Name: lead
+	ID: 20
+	Name: good supplier
+	Description: prospect supplier for vital raw material
+	Created At: 2025-07-02T01:45:11.523744-03:00
+	Blocked: Yes
+>
+Board (marketing):
+	- (38) initial
+		No cards in this column
+	- (41) lead
+		- (20) good supplier
+	- (42) negotiation
+		No cards in this column
+	- (43) closing
+		No cards in this column
+	- (39) final
+		No cards in this column
+	- (40) canceled
+		No cards in this column
+>
+Board Menu:
+	- (0) Go Back
+	- (1) Create Card
+	- (2) Create Column
+	- (3) Show Board
+	- (4) Show Board Full
+	- (5) Delete Column
+>0
+
+
+	T  A  S  K -> B  O  A  R  D
+
+Main Menu:
+	- (0) Exit
+	- (1) Select Board
+	- (2) Create Board
+	- (3) Exclude Board
+	- (4) Debug
+>4
+[Card[cardId=3, name=create board class, description=board class that holds columns that holds cards, createdAt=2025-06-26T18:47:34.649012-03:00, isBlocked=false, columnId=8], Card[cardId=4, name=hey card, description=a card for testing, createdAt=2025-06-26T19:13:19.979431-03:00, isBlocked=false, columnId=12], Card[cardId=5, name=move cards, description=create moving cards feature, createdAt=2025-06-27T01:45:39.535705-03:00, isBlocked=false, columnId=8], Card[cardId=7, name=another, description=debugging, createdAt=2025-06-27T12:53:11.131047-03:00, isBlocked=false, columnId=12], Card[cardId=8, name=more debug, description=more debugging, createdAt=2025-06-27T12:54:33.018047-03:00, isBlocked=false, columnId=17], Card[cardId=9, name=test block, description=block testing, createdAt=2025-06-27T17:43:22.731867-03:00, isBlocked=true, columnId=8], Card[cardId=10, name=test app, description=test a board app, createdAt=2025-06-28T02:49:46.089185-03:00, isBlocked=true, columnId=23], Card[cardId=11, name=some other card, description=another card, createdAt=2025-06-28T18:37:36.911489-03:00, isBlocked=false, columnId=8], Card[cardId=12, name=document stuff, description=make some documentation, createdAt=2025-06-29T02:02:16.582378-03:00, isBlocked=false, columnId=28], Card[cardId=13, name=01, description=burguer large, createdAt=2025-06-29T02:40:43.407459-03:00, isBlocked=true, columnId=31], Card[cardId=14, name=11, description=chicken sandwich, createdAt=2025-06-29T02:44:33.535463-03:00, isBlocked=false, columnId=31], Card[cardId=15, name=02, description=ice cream and sunday, createdAt=2025-06-29T03:06:14.642412-03:00, isBlocked=false, columnId=30], Card[cardId=16, name=21, description=double burger and soda, createdAt=2025-06-29T03:28:59.608432-03:00, isBlocked=false, columnId=30], Card[cardId=17, name=eletric bill 2026-12, description=$500, createdAt=2025-06-30T00:36:32.760037-03:00, isBlocked=true, columnId=35], Card[cardId=18, name=water bill 2026-12, description=$80, createdAt=2025-06-30T00:40:15.557610-03:00, isBlocked=false, columnId=35], Card[cardId=19, name=122, description=fries and soda, createdAt=2025-07-02T01:35:12.515408-03:00, isBlocked=false, columnId=31], Card[cardId=20, name=good supplier, description=prospect supplier for vital raw material, createdAt=2025-07-02T01:45:11.523744-03:00, isBlocked=true, columnId=41]]
+
+
+	T  A  S  K -> B  O  A  R  D
+
+Main Menu:
+	- (0) Exit
+	- (1) Select Board
+	- (2) Create Board
+	- (3) Exclude Board
+	- (4) Debug
+>0
+
+
+	Bye
+
+
+BUILD SUCCESSFUL in 15m 38s
+4 actionable tasks: 1 executed, 3 up-to-date
+
+Comint finished at Wed Jul  2 01:46:29
+#+end_src
