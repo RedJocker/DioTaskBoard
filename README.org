@@ -33,22 +33,22 @@ Escreva um código que irá criar um board customizável para acompanhamento de 
       - final
       - pendente;
 
-  - Cada board só pode ter
+  - [X] Cada board só pode ter
     - 1 coluna do tipo inicial,
     - 1 coluna do tipo cancelamento
     - 1 coluna do tipo final
     - N colunas do tipo pendente
-  - obrigatoriamente a coluna
+  - [X] obrigatoriamente a coluna
     - =inicial= deve ser a primeira coluna do board
     - =final= deve ser a penúltima coluna do board
     - =cancelamento= deve ser a última coluna do board
-  - As colunas podem ter 0 ou N cards,
+  - [X] As colunas podem ter 0 ou N cards,
   - [X] Cada card tem
     - título,
     - descrição,
     - data de criação
     - se está bloqueado;
-  - Um card deve navegar nas colunas
+  - [X] Um card deve navegar nas colunas
     - seguindo a ordem das coluna no board, sem pular nenhuma etapa,
     - exceto pela coluna de cards cancelados que pode receber cards diretamente de qualquer coluna
     - a coluna de cards cancelados não aceita cartões da coluna final;
